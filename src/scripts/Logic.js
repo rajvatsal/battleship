@@ -64,6 +64,8 @@ export function Gameboard() {
 	};
 
 	const receiveAttack = ([x, y], shipList) => {
+		if (_board[x][y] === "O") return;
+		if (_board[x][y] === "X") return;
 		if (_board[x][y] === null) {
 			_board[x][y] = "O";
 			return;

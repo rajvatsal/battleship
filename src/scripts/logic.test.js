@@ -68,5 +68,11 @@ describe("Gameboard Factory", () => {
 
 		expect(shipOne.hit()).toBe(2);
 		expect(shipTwo.hit()).toBe(1);
+
+		receiveAttack([0, 0], [shipOne, shipTwo]);
+		expect(getBoard()[0][0]).toBe("O");
+
+		receiveAttack([5, 7], [shipOne, shipTwo]);
+		expect(shipOne.hit()).toBe(3);
 	});
 });
