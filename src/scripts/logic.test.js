@@ -1,24 +1,36 @@
 import { Ship, Gameboard } from "./Logic.js";
 
+const coords = [2, 0];
 describe("Ship Factory", () => {
-	const ship = Ship(3);
+	const ship = Ship(coords, 3);
 	it("Has hit()?", () => expect(ship.hit()).toBe(1));
 	it("Has hit()?", () => expect(ship.hit()).toBe(2));
 
 	it("Is part of ship interface", () =>
-		expect(Ship().type).toMatch("Ship Interface"));
+		expect(Ship(coords).type).toMatch("Ship Interface"));
 
 	it("Ship sunk false", () => expect(ship.isSunk()).toBe(false));
 	it("Ship sunk true", () => {
 		ship.hit();
 		expect(ship.isSunk()).toBe(true);
 	});
+
+	it("Get occupied squares", () => {
+		const ship = Ship([0, 0], 4, 180);
+		expect(ship.getOccupiedSquares()).toEqual([
+			[0, 0],
+			[0, 1],
+			[0, 2],
+			[0, 3],
+		]);
+	});
 });
 
 describe("Gameboard Factory", () => {
 	const gb = Gameboard();
+	const { placeShip, getBoard } = gb;
 	it("Get board", () => {
-		const board = gb.getBoard();
+		const board = getBoard();
 		expect(board.length).toBe(10);
 		for (const row of board) {
 			expect(row.length).toBe(10);
@@ -28,29 +40,33 @@ describe("Gameboard Factory", () => {
 		}
 	});
 
-	describe("Place ship", () => {
-		const { placeShip } = gb;
-		it("Can place ship", () => {
-			placeShip([5, 5], 90, 4);
-			let shipValue = [];
-			for (let i = 5; i < 9; i++) {
-				shipValue.push(gb.getBoard()[i][5]);
-			}
+	it("Place ship", () => {
+		placeShip([5, 5], 90, 4);
+		let shipValue = [];
+		for (let i = 5; i < 9; i++) {
+			shipValue.push(gb.getBoard()[i][5]);
+		}
 
-			expect(shipValue).toEqual([1, 1, 1, 1]);
+		expect(shipValue).toEqual([1, 1, 1, 1]);
 
-			placeShip([0, 0], 180, 2);
-			shipValue = [gb.getBoard()[0][0], gb.getBoard()[0][1]];
+		placeShip([0, 0], 180, 2);
+		shipValue = [gb.getBoard()[0][0], gb.getBoard()[0][1]];
 
-			expect(shipValue).toEqual([1, 1]);
-		});
+		expect(shipValue).toEqual([1, 1]);
+	});
 
-		it("Returned Object is instance of Ship()", () => {
-			const ship = placeShip([3, 0], 90, 2);
-			expect(ship.type).toMatch(Ship().type);
-			expect(ship.hit()).toBe(1);
-			expect(ship.hit()).toBe(2);
-			expect(ship.isSunk()).toBe(true);
-		});
+	it("Receive Attack", () => {
+		const { placeShip, receiveAttack, getBoard } = Gameboard();
+		const shipOne = placeShip([5, 5], 180, 4);
+		const shipTwo = placeShip([0, 1], 90, 4);
+
+		receiveAttack([0, 0], [shipOne, shipTwo]);
+		expect(getBoard()[0][0]).toBe("O");
+
+		receiveAttack([5, 7], [shipOne, shipTwo]);
+		expect(getBoard()[5][7]).toBe("X");
+
+		expect(shipOne.hit()).toBe(2);
+		expect(shipTwo.hit()).toBe(1);
 	});
 });
