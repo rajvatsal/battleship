@@ -96,3 +96,8 @@ export function Gameboard() {
 
 	return Object.assign(Object.create(composite));
 }
+
+export function Player(type) {
+	const kind = type ? "computer" : "human";
+	return Object.assign(Gameboard(), { kind });
+}
