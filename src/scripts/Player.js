@@ -1,7 +1,12 @@
+<<<<<<< HEAD
 import { emit, on, off } from "./pub-sub.js";
 
 const _shipInterface = (state) => ({
 	interface: "Ship Interface",
+=======
+const shipInterface = (state) => ({
+	type: "_Ship Interface",
+>>>>>>> 0b81362 (feat: Add GameController.js and ScreenController.js)
 	isSunk: () => state.isSunk(),
 	hit: () => state.hit(),
 	getOccupiedSquares: () => state.getOccupiedSquares(),
