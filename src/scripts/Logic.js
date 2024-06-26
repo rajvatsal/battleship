@@ -76,5 +76,12 @@ export function Gameboard() {
 		_getAttackedShip([x, y]).hit();
 	};
 
-	return { getBoard, placeShip, receiveAttack };
+	const isGameOver = () => {
+		for (const ship of _ships) {
+			if (ship.isSunk() === false) return false;
+		}
+		return true;
+	};
+
+	return { getBoard, placeShip, receiveAttack, isGameOver };
 }

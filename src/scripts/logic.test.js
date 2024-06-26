@@ -69,4 +69,12 @@ describe("Gameboard Factory", () => {
 		receiveAttack([0, 0]);
 		expect(getBoard()[0][0]).toBe("O");
 	});
+
+	it("Check for game over", () => {
+		const { isGameOver, placeShip, receiveAttack } = Gameboard();
+		placeShip([0, 0], 90, 1);
+		expect(isGameOver()).toBe(false);
+		receiveAttack([0, 0]);
+		expect(isGameOver()).toBe(true);
+	});
 });
