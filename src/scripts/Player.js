@@ -1,7 +1,7 @@
 import { emit, on, off } from "./pub-sub.js";
 
 const shipInterface = (state) => ({
-	type: "Ship Interface",
+	type: "_Ship Interface",
 	isSunk: () => state.isSunk(),
 	hit: () => state.hit(),
 	getOccupiedSquares: () => state.getOccupiedSquares(),
@@ -15,7 +15,7 @@ const gameboardInterface = (state) => ({
 	isGameOver: () => state.isGameOver(),
 });
 
-export function Ship(coord, len = 1, angle = 90) {
+function _Ship(coord, len = 1, angle = 90) {
 	try {
 		if (!coord.length) throw new Error("Not valid coordinates");
 		if (angle !== 90 && angle !== 180) throw new Error("Not valid angle");
@@ -44,7 +44,7 @@ export function Ship(coord, len = 1, angle = 90) {
 	return Object.assign(Object.create(shipInterface(proto)));
 }
 
-export function Gameboard() {
+function _Gameboard() {
 	const _ships = [];
 	const _board = [];
 	for (let i = 0; i < 10; i++) {
@@ -70,7 +70,7 @@ export function Gameboard() {
 				else _board[x][i + y] = 1;
 			}
 
-			_ships.push(Ship(coord, len, angle));
+			_ships.push(_Ship(coord, len, angle));
 		},
 		receiveAttack: ([x, y]) => {
 			if (_board[x][y] === "O") return;
@@ -97,7 +97,7 @@ export function Gameboard() {
 	return Object.assign(Object.create(composite));
 }
 
-export function Player(type) {
+export default function Player(type) {
 	const kind = type ? "computer" : "human";
-	return Object.assign(Gameboard(), { kind });
+	return Object.assign(_Gameboard(), { kind });
 }
