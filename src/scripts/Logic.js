@@ -7,6 +7,14 @@ const shipInterface = (state) => ({
 	getOccupiedSquares: () => state.getOccupiedSquares(),
 });
 
+const gameboardInterface = (state) => ({
+	type: "Gameboard Interface",
+	getBoard: () => state.getBoard(),
+	placeShip: (coord, angle, len) => state.placeShip(coord, angle, len),
+	receiveAttack: (coord) => state.receiveAttack(coord),
+	isGameOver: () => state.isGameOver(),
+});
+
 export function Ship(coord, len = 1, angle = 90) {
 	try {
 		if (!coord.length) throw new Error("Not valid coordinates");
@@ -43,18 +51,6 @@ export function Gameboard() {
 		_board.push(Array(10).fill(null));
 	}
 
-	const getBoard = () => _board;
-	const placeShip = (coord, angle, len) => {
-		const [x, y] = coord;
-		// I can create occupied squares array here too and just send them to ship factory
-		for (let i = 0; i < len; i++) {
-			if (angle === 90) _board[i + x][y] = 1;
-			else _board[x][i + y] = 1;
-		}
-
-		_ships.push(Ship(coord, len, angle));
-	};
-
 	const _getAttackedShip = ([a, b]) => {
 		for (const ship of _ships) {
 			const squares = ship.getOccupiedSquares();
@@ -64,24 +60,39 @@ export function Gameboard() {
 		}
 	};
 
-	const receiveAttack = ([x, y]) => {
-		if (_board[x][y] === "O") return;
-		if (_board[x][y] === "X") return;
-		if (_board[x][y] === null) {
-			_board[x][y] = "O";
-			return;
-		}
+	const proto = {
+		getBoard: () => _board,
+		placeShip: (coord, angle, len) => {
+			const [x, y] = coord;
+			// I can create occupied squares array here too and just send them to ship factory
+			for (let i = 0; i < len; i++) {
+				if (angle === 90) _board[i + x][y] = 1;
+				else _board[x][i + y] = 1;
+			}
 
-		_board[x][y] = "X";
-		_getAttackedShip([x, y]).hit();
+			_ships.push(Ship(coord, len, angle));
+		},
+		receiveAttack: ([x, y]) => {
+			if (_board[x][y] === "O") return;
+			if (_board[x][y] === "X") return;
+			if (_board[x][y] === null) {
+				_board[x][y] = "O";
+				return;
+			}
+
+			_board[x][y] = "X";
+			_getAttackedShip([x, y]).hit();
+		},
+
+		isGameOver: () => {
+			for (const ship of _ships) {
+				if (ship.isSunk() === false) return false;
+			}
+			return true;
+		},
 	};
 
-	const isGameOver = () => {
-		for (const ship of _ships) {
-			if (ship.isSunk() === false) return false;
-		}
-		return true;
-	};
+	const composite = gameboardInterface(proto);
 
-	return { getBoard, placeShip, receiveAttack, isGameOver };
+	return Object.assign(Object.create(composite));
 }
