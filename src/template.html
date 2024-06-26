@@ -7,6 +7,40 @@
   <title>Demo</title>
 </head>
 
-<body></body>
+<body>
+  <header>
+    <h1>Battleship</h1>
+    <div class="message-box">
+      <span>Place ships</span>
+    </div>
+  </header>
+  <main>
+    <section id="gameboards">
+      <div class="gameboards__left">
+        <div class="gameboards__left__board"></div>
+        <div class="toggle-player-type">
+          <label for="gameboards__left__toggle-player">Computer</label>
+          <input id="gameboards__left__toggle-player" type="checkbox" name="player_type" value="" />
+        </div>
+      </div>
+      <div class="gaemboards__right">
+        <div class="gameboards__right__board"></div>
+        <div class="toggle-player-type">
+          <label for="gameboards__right__toggle-player">Player</label>
+          <input id="gameboards__right__toggle-player" type="checkbox" name="player_type" value="" />
+        </div>
+      </div>
+    </section>
+    <section id="options">
+      <div class="options__buttons">
+        <button class="options__buttons__randomize" type="button">
+          Randomize
+        </button>
+        <button class="options__buttons__reset" type="button">Reset</button>
+      </div>
+    </section>
+  </main>
+  <footer></footer>
+</body>
 
 </html>
