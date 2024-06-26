@@ -37,6 +37,7 @@ export function Ship(coord, len = 1, angle = 90) {
 }
 
 export function Gameboard() {
+	const _ships = [];
 	const _board = [];
 	for (let i = 0; i < 10; i++) {
 		_board.push(Array(10).fill(null));
@@ -51,11 +52,11 @@ export function Gameboard() {
 			else _board[x][i + y] = 1;
 		}
 
-		return Ship(coord, len, angle);
+		_ships.push(Ship(coord, len, angle));
 	};
 
-	const _getAttackedShip = ([a, b], ships) => {
-		for (const ship of ships) {
+	const _getAttackedShip = ([a, b]) => {
+		for (const ship of _ships) {
 			const squares = ship.getOccupiedSquares();
 			for (const square of squares) {
 				if (square[0] === a && square[1] === b) return ship;
@@ -63,7 +64,7 @@ export function Gameboard() {
 		}
 	};
 
-	const receiveAttack = ([x, y], shipList) => {
+	const receiveAttack = ([x, y]) => {
 		if (_board[x][y] === "O") return;
 		if (_board[x][y] === "X") return;
 		if (_board[x][y] === null) {
@@ -72,7 +73,7 @@ export function Gameboard() {
 		}
 
 		_board[x][y] = "X";
-		_getAttackedShip([x, y], shipList).hit();
+		_getAttackedShip([x, y]).hit();
 	};
 
 	return { getBoard, placeShip, receiveAttack };

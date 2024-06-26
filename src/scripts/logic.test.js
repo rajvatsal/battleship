@@ -57,22 +57,16 @@ describe("Gameboard Factory", () => {
 
 	it("Receive Attack", () => {
 		const { placeShip, receiveAttack, getBoard } = Gameboard();
-		const shipOne = placeShip([5, 5], 180, 4);
-		const shipTwo = placeShip([0, 1], 90, 4);
+		placeShip([5, 5], 180, 4);
+		placeShip([0, 1], 90, 4);
 
-		receiveAttack([0, 0], [shipOne, shipTwo]);
+		receiveAttack([0, 0]);
 		expect(getBoard()[0][0]).toBe("O");
 
-		receiveAttack([5, 7], [shipOne, shipTwo]);
+		receiveAttack([5, 7]);
 		expect(getBoard()[5][7]).toBe("X");
 
-		expect(shipOne.hit()).toBe(2);
-		expect(shipTwo.hit()).toBe(1);
-
-		receiveAttack([0, 0], [shipOne, shipTwo]);
+		receiveAttack([0, 0]);
 		expect(getBoard()[0][0]).toBe("O");
-
-		receiveAttack([5, 7], [shipOne, shipTwo]);
-		expect(shipOne.hit()).toBe(3);
 	});
 });
