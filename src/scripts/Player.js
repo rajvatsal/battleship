@@ -1,14 +1,14 @@
 import { emit, on, off } from "./pub-sub.js";
 
 const shipInterface = (state) => ({
-	type: "_Ship Interface",
+	interface: "Ship Interface",
 	isSunk: () => state.isSunk(),
 	hit: () => state.hit(),
 	getOccupiedSquares: () => state.getOccupiedSquares(),
 });
 
 const gameboardInterface = (state) => ({
-	type: "Gameboard Interface",
+	interface: "Gameboard Interface",
 	getBoard: () => state.getBoard(),
 	placeShip: (coord, angle, len) => state.placeShip(coord, angle, len),
 	receiveAttack: (coord) => state.receiveAttack(coord),

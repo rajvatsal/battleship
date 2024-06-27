@@ -10,7 +10,7 @@ describe("Player factory", () => {
 
 	it("Player has gameboard", () => {
 		const player = Player(0);
-		expect(player.type).toMatch("Gameboard Interface");
+		expect(player.interface).toMatch("Gameboard Interface");
 		player.placeShip([0, 0], 90, 1);
 		expect(player.isGameOver()).toBe(false);
 		player.receiveAttack([0, 0]);
