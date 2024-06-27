@@ -41,7 +41,7 @@ function _Ship(coord, len = 1, angle = 90) {
 		getOccupiedSquares: () => _occupiedSquares,
 	};
 
-	return Object.assign(Object.create(shipInterface(proto)));
+	return Object.assign(shipInterface(proto));
 }
 
 function _Gameboard() {
@@ -92,9 +92,7 @@ function _Gameboard() {
 		},
 	};
 
-	const composite = gameboardInterface(proto);
-
-	return Object.assign(Object.create(composite));
+	return Object.assign(gameboardInterface(proto));
 }
 
 export default function Player(type) {
