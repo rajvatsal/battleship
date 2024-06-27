@@ -34,6 +34,20 @@ header {
   padding-left: 10px;
 }
 
+.gameboards__left {
+  display: grid;
+  grid-template: 1fr 1fr / 100px 1fr;
+}
+
+.gameboards__right {
+  display: grid;
+  grid-template: repeat(2, 1fr) / 1fr 100px;
+}
+
+.gameboards__left .toggle-player-type {
+  grid-row: 2;
+}
+
 .board {
   display: grid;
   grid-template: repeat(var(--tile-number), var(--tile-length)) / repeat(
