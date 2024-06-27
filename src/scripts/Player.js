@@ -53,7 +53,11 @@ function _Gameboard() {
 		for (const ship of _ships) {
 			const squares = ship.getOccupiedSquares();
 			for (const square of squares) {
-				if (square[0] === a && square[1] === b) return ship;
+				if (
+					square[0] === Number.parseInt(a) &&
+					square[1] === Number.parseInt(b)
+				)
+					return ship;
 			}
 		}
 	};
