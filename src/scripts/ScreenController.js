@@ -25,6 +25,12 @@ function _updateBoard(value) {
 	else currentSquare.classList.add("miss");
 }
 
+function _gameOver(side) {
+	if (side === "player-one") alert("You won :)");
+	else alert("You Lost :_(");
+}
+
 rightBoard.addEventListener("mousedown", _clickHandlerRightGrid);
 
 pubsub.on("UpdateBoard", _updateBoard);
+pubsub.on("GameOver", _gameOver);
