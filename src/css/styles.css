@@ -36,16 +36,16 @@ header {
 
 .gameboards__left {
   display: grid;
-  grid-template: 1fr 1fr / 100px 1fr;
+  grid-template: repeat(2, auto) / 100px 1fr;
 }
 
 .gameboards__right {
   display: grid;
-  grid-template: repeat(2, 1fr) / 1fr 100px;
+  grid-template: repeat(2, auto) / 1fr 100px;
 }
 
 .gameboards__left .toggle-player-type {
-  grid-row: 2;
+  grid-column: 2;
 }
 
 .board {
