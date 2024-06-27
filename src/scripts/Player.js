@@ -96,6 +96,6 @@ function _Gameboard() {
 }
 
 export default function Player(type) {
-	const kind = type ? "computer" : "human";
-	return Object.assign(_Gameboard(), { kind });
+	const playerType = type ? "computer" : "human";
+	return Object.assign(_Gameboard(), { playerType });
 }
