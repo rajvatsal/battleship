@@ -3,9 +3,9 @@ import Player from "./Player.js";
 describe("Player factory", () => {
 	it("Player type", () => {
 		let player = Player(1);
-		expect(player.kind).toMatch("computer");
+		expect(player.playerType).toMatch("computer");
 		player = Player(0);
-		expect(player.kind).toMatch("human");
+		expect(player.playerType).toMatch("human");
 	});
 
 	it("Player has gameboard", () => {
