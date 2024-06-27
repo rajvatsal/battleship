@@ -1,13 +1,13 @@
 import { emit, on, off } from "./pub-sub.js";
 
-const shipInterface = (state) => ({
+const _shipInterface = (state) => ({
 	interface: "Ship Interface",
 	isSunk: () => state.isSunk(),
 	hit: () => state.hit(),
 	getOccupiedSquares: () => state.getOccupiedSquares(),
 });
 
-const gameboardInterface = (state) => ({
+const _gameboardInterface = (state) => ({
 	interface: "Gameboard Interface",
 	getBoard: () => state.getBoard(),
 	placeShip: (coord, angle, len) => state.placeShip(coord, angle, len),
@@ -41,7 +41,7 @@ function _Ship(coord, len = 1, angle = 90) {
 		getOccupiedSquares: () => _occupiedSquares,
 	};
 
-	return Object.assign(shipInterface(proto));
+	return Object.assign(_shipInterface(proto));
 }
 
 function _Gameboard() {
@@ -92,7 +92,7 @@ function _Gameboard() {
 		},
 	};
 
-	return Object.assign(gameboardInterface(proto));
+	return Object.assign(_gameboardInterface(proto));
 }
 
 export default function Player(type) {
