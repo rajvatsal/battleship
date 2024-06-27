@@ -27,7 +27,7 @@ const emit = (eventName, data, fnName) => {
 	//publish function
 	let returnValue = null;
 	if (_events[eventName]) {
-		for (const fn of eventsDefinde[eventName]) {
+		for (const fn of _events[eventName]) {
 			if (fn.psId === fnName) returnValue = fn(data);
 			else fn(data);
 		}

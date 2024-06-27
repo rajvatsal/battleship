@@ -93,7 +93,7 @@ function _Gameboard() {
 	return Object.assign(_gameboardInterface(proto));
 }
 
-export default function Player(type) {
+export default function Player(type, side) {
 	const playerType = type ? "computer" : "human";
-	return Object.assign(_Gameboard(), { playerType });
+	return Object.assign(_Gameboard(), { playerType, side });
 }

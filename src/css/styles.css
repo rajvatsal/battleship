@@ -71,3 +71,11 @@ button,
 .toggle-player-type {
   cursor: pointer;
 }
+
+button.hit {
+  background-color: red;
+}
+
+button.miss {
+  background-color: grey;
+}
