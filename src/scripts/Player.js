@@ -33,13 +33,13 @@ function _Ship(coord, len = 1, angle = 90) {
 		_occupiedSquares.push(coords);
 	}
 
-	const proto = {
+	const state = {
 		hit: () => ++_hitCount,
 		isSunk: () => _length <= _hitCount && _hitCount > 0,
 		getOccupiedSquares: () => _occupiedSquares,
 	};
 
-	return Object.assign(_shipInterface(proto));
+	return Object.assign(_shipInterface(state));
 }
 
 function _Gameboard() {
@@ -62,7 +62,7 @@ function _Gameboard() {
 		}
 	};
 
-	const proto = {
+	const state = {
 		getBoard: () => _board,
 		placeShip: (coord, angle, len) => {
 			const [x, y] = coord;
@@ -94,7 +94,7 @@ function _Gameboard() {
 		},
 	};
 
-	return Object.assign(_gameboardInterface(proto));
+	return Object.assign(_gameboardInterface(state));
 }
 
 export default function Player(type, side) {
