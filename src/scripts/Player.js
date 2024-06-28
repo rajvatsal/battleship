@@ -1,8 +1,16 @@
+// Fix magic values
+// "." adjacent square
+// "X" hit
+// "O" miss
+// "1" ship that is not hit yet
+// null empty
+
 const _shipInterface = (state) => ({
 	interface: "Ship Interface",
 	isSunk: () => state.isSunk(),
 	hit: () => state.hit(),
 	getOccupiedSquares: () => state.getOccupiedSquares(),
+	getAdjacentSquares: () => state.getAdjacentSquares(),
 });
 
 const _gameboardInterface = (state) => ({
@@ -13,33 +21,27 @@ const _gameboardInterface = (state) => ({
 	isGameOver: () => state.isGameOver(),
 });
 
-function _Ship(coord, len = 1, angle = 90) {
-	try {
-		if (!coord.length) throw new Error("Not valid coordinates");
-		if (angle !== 90 && angle !== 180) throw new Error("Not valid angle");
-	} catch (msg) {
-		return console.error(msg);
-	}
-
+function _Ship(coveredSq, adjacentSq, len = 1) {
 	const _MAX_LENGTH = 4;
 	const _MIN_LENGTH = 1;
 	const _length =
 		len > _MAX_LENGTH ? _MAX_LENGTH : len < _MIN_LENGTH ? _MIN_LENGTH : len;
 	let _hitCount = 0;
-	const _occupiedSquares = [];
-	for (let i = 0; i < _length; i++) {
-		const coords =
-			angle === 90 ? [coord[0] + i, coord[1]] : [coord[0], coord[1] + i];
-		_occupiedSquares.push(coords);
-	}
+	const _occupiedSquares = coveredSq;
+	const _adjacentSquares = adjacentSq;
 
 	const state = {
 		hit: () => ++_hitCount,
 		isSunk: () => _length <= _hitCount && _hitCount > 0,
 		getOccupiedSquares: () => _occupiedSquares,
+		getAdjacentSquares: () => _adjacentSquares,
 	};
 
 	return Object.assign(_shipInterface(state));
+}
+
+function _isArrayEqual([x, y], [a, b]) {
+	return x === a && y === b;
 }
 
 function _Gameboard() {
@@ -62,21 +64,53 @@ function _Gameboard() {
 		}
 	};
 
+	const _getAdjacentTiles = (coveredTiles) => {
+		const adjacent = [];
+		for (const [x, y] of coveredTiles) {
+			for (let i = x - 1; i <= x + 1; i++) {
+				for (let j = y - 1; j <= y + 1; j++) {
+					if (coveredTiles.some((sq) => _isArrayEqual([i, j], sq))) continue;
+					if (adjacent.some((sq) => _isArrayEqual([i, j], sq))) continue;
+					if (i > 9 || i < 0 || j > 9 || j < 0) continue;
+					adjacent.push([i, j]);
+				}
+			}
+		}
+		return adjacent;
+	};
+
+	const _getCoveredSquares = ([x, y], angle, len) => {
+		const squares = [];
+		for (let i = 0; i < len; i++) {
+			const currentSquare = angle === 90 ? [x + i, y] : [x, y + i];
+
+			// check if the square is out of bounds
+			if (currentSquare[0] > 9 || currentSquare[1] > 9) return [];
+			// check if the square is empty
+			if (_board[currentSquare[0]][currentSquare[1]] !== null) return [];
+			squares.push(currentSquare);
+		}
+		return squares;
+	};
+
 	const state = {
 		getBoard: () => _board,
 		placeShip: (coord, angle, len) => {
-			const [x, y] = coord;
-			// I can create occupied squares array here too and just send them to ship factory
-			for (let i = 0; i < len; i++) {
-				if (angle === 90) _board[i + x][y] = 1;
-				else _board[x][i + y] = 1;
+			const occupiedSq = _getCoveredSquares(coord, angle, len);
+			if (occupiedSq.length === 0) return false;
+			for (const [x, y] of occupiedSq) {
+				_board[x][y] = 1;
 			}
-
-			_ships.push(_Ship(coord, len, angle));
+			const adjacentSq = _getAdjacentTiles(occupiedSq);
+			for (const [x, y] of adjacentSq) {
+				_board[x][y] = _board[x][y] !== null ? _board[x][y] : ".";
+			}
+			_ships.push(_Ship(occupiedSq, adjacentSq, len));
 		},
 		receiveAttack: ([x, y]) => {
 			if (_board[x][y] === "O") return;
 			if (_board[x][y] === "X") return;
+			if (_board[x][y] === ".") return;
 			if (_board[x][y] === null) {
 				_board[x][y] = "O";
 				return;
