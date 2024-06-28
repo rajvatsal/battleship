@@ -23,6 +23,11 @@ const _gameboardInterface = (state) => ({
 	resetBoard: () => state.resetBoard(),
 });
 
+function _getRandom(max, limit) {
+	const range = limit ? 1 : 0;
+	return Math.floor(Math.random() * max + range);
+}
+
 function _Ship(coveredSq, adjacentSq, len = 1) {
 	const _MAX_LENGTH = 4;
 	const _MIN_LENGTH = 1;
@@ -95,11 +100,6 @@ function _Gameboard() {
 		return squares;
 	};
 
-	const _getRandom = (max, limit) => {
-		const range = limit ? 1 : 0;
-		return Math.floor(Math.random() * max + range);
-	};
-
 	const state = {
 		getBoard: () => _board,
 		placeShip: (coord, angle, len) => {
@@ -147,7 +147,7 @@ function _Gameboard() {
 			for (let i = 0; i < 10; i++) {
 				do {
 					length = _getRandom(5, 1);
-					coordinates = [_getRandom(9, 1), _getRandom(9, 1)];
+					coordinates = [_getRandom(9, 0), _getRandom(9, 0)];
 					angle = _getRandom(2, 0) === 1 ? 180 : 90;
 				} while (this.placeShip(coordinates, angle, length) === false);
 			}
