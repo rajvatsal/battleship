@@ -4,6 +4,12 @@ import pubsub from "./Pubsub.js";
 const $ = document.querySelector.bind(document);
 const leftBoard = $(".gameboards__left__board");
 const rightBoard = $(".gameboards__right__board");
+const classes = {
+	X: () => currentSquare.classList.add("hit"),
+	O: () => currentSquare.classList.add("miss"),
+	".": () => currentSquare.classList.add("verified-tile"),
+	1: () => currentSquare.classList.add("visible-ship"),
+};
 let currentSquare;
 
 populateGrid(leftBoard);
@@ -21,8 +27,7 @@ function _clickHandlerRightGrid(event) {
 }
 
 function _updateBoard(value) {
-	if (value === "X") currentSquare.classList.add("hit");
-	else currentSquare.classList.add("miss");
+	classes[value]();
 }
 
 function _gameOver(side) {
