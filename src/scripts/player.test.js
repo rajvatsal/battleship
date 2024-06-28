@@ -16,5 +16,7 @@ describe("Player factory", () => {
 		expect(player.isGameOver()).toBe(false);
 		player.receiveAttack([0, 0]);
 		expect(player.isGameOver()).toBe(true);
+		player.resetBoard();
+		expect(player.getBoard()[0][1]).toBe(null);
 	});
 });

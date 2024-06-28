@@ -20,6 +20,7 @@ const _gameboardInterface = (state) => ({
 	receiveAttack: (coord) => state.receiveAttack(coord),
 	isGameOver: () => state.isGameOver(),
 	createRandomLayout: () => state.createRandomLayout(),
+	resetBoard: () => state.resetBoard(),
 });
 
 function _Ship(coveredSq, adjacentSq, len = 1) {
@@ -46,7 +47,7 @@ function _isArrayEqual([x, y], [a, b]) {
 }
 
 function _Gameboard() {
-	const _ships = [];
+	let _ships = [];
 	const _board = [];
 	for (let i = 0; i < 10; i++) {
 		_board.push(Array(10).fill(null));
@@ -149,6 +150,15 @@ function _Gameboard() {
 					coordinates = [_getRandom(9, 1), _getRandom(9, 1)];
 					angle = _getRandom(2, 0) === 1 ? 180 : 90;
 				} while (this.placeShip(coordinates, angle, length) === false);
+			}
+		},
+
+		resetBoard: () => {
+			_ships = [];
+			for (let i = 0; i < _board.length; i++) {
+				for (let j = 0; j < _board.length; j++) {
+					if (_board[i][j] !== null) _board[i][j] = null;
+				}
 			}
 		},
 	};
