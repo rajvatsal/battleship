@@ -19,6 +19,7 @@ const _gameboardInterface = (state) => ({
 	placeShip: (coord, angle, len) => state.placeShip(coord, angle, len),
 	receiveAttack: (coord) => state.receiveAttack(coord),
 	isGameOver: () => state.isGameOver(),
+	createRandomLayout: () => state.createRandomLayout(),
 });
 
 function _Ship(coveredSq, adjacentSq, len = 1) {
@@ -93,6 +94,11 @@ function _Gameboard() {
 		return squares;
 	};
 
+	const _getRandom = (max, limit) => {
+		const range = limit ? 1 : 0;
+		return Math.floor(Math.random() * max + range);
+	};
+
 	const state = {
 		getBoard: () => _board,
 		placeShip: (coord, angle, len) => {
@@ -125,6 +131,25 @@ function _Gameboard() {
 				if (ship.isSunk() === false) return false;
 			}
 			return true;
+		},
+
+		createRandomLayout: function () {
+			let length;
+			let coordinates;
+			let angle;
+			// [[NOTE TO SELF ]]
+			// Use a set of predefined ships that you want to use
+			// example 1 ship of length 5,
+			// 2 ships for length 3
+			// 5 ships of length 1
+			// instead of maginc values like 10
+			for (let i = 0; i < 10; i++) {
+				do {
+					length = _getRandom(5, 1);
+					coordinates = [_getRandom(9, 1), _getRandom(9, 1)];
+					angle = _getRandom(2, 0) === 1 ? 180 : 90;
+				} while (this.placeShip(coordinates, angle, length) === false);
+			}
 		},
 	};
 
