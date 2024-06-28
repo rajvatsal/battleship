@@ -79,3 +79,8 @@ button.hit {
 button.miss {
   background-color: grey;
 }
+
+button.visible-ship {
+  background-color: blue;
+  border: 2px solid blue;
+}

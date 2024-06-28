@@ -11,6 +11,15 @@ function _receivedAttack({ side, coords }) {
 	if (attackedPlayer.isGameOver()) pubsub.emit("GameOver", attackedPlayer.side);
 }
 
+playerOne.createRandomLayout();
 playerTwo.createRandomLayout();
 
 pubsub.on("ReceivedAttack", _receivedAttack);
+pubsub.on("Initialize Page", () =>
+	pubsub.emit("Initialized Game", playerOne.getBoard()),
+);
+pubsub.on("Randomize Player One", () => {
+	playerOne.resetBoard();
+	playerOne.createRandomLayout();
+	pubsub.emit("Randomized Player One", playerOne.getBoard());
+});
