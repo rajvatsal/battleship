@@ -7,9 +7,8 @@ const playerTwo = Player(1, "player-two");
 function _receivedAttack({ side, coords }) {
 	const attackedPlayer = playerOne.side === side ? playerOne : playerTwo;
 	const isShipSunk = attackedPlayer.receiveAttack(coords);
-	if (isShipSunk) pubsub.emit("ShipSunk", isShipSunk);
-	else
-		pubsub.emit("UpdateBoard", attackedPlayer.getBoard()[coords[0]][coords[1]]);
+	if (isShipSunk) pubsub.emit("ShowVerifiedSquares", isShipSunk);
+	pubsub.emit("UpdateBoard", attackedPlayer.getBoard()[coords[0]][coords[1]]);
 	if (attackedPlayer.hasLost()) pubsub.emit("GameOver", attackedPlayer.side);
 }
 

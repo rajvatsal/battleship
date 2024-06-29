@@ -101,6 +101,20 @@ function _Gameboard() {
 		return squares;
 	};
 
+	const _getCornerSquares = (x, y) => {
+		const squares = [
+			[x + 1, y - 1],
+			[x + 1, y + 1],
+			[x - 1, y - 1],
+			[x - 1, y + 1],
+		].filter(([x, y]) => x > 0 && x < 9 && y > 0 && y < 9);
+		for (const [a, b] of squares) {
+			const square = _board[a][b];
+			if (square === null || square === ".") _board[a][b] = "*";
+		}
+		return squares;
+	};
+
 	const state = {
 		getBoard: () => _board,
 		placeShip: (coord, angle, len) => {
@@ -115,7 +129,9 @@ function _Gameboard() {
 			}
 			_ships.push(_Ship(occupiedSq, adjacentSq, len));
 		},
-		receiveAttack: ([x, y]) => {
+		receiveAttack: function ([x, y]) {
+			x = Number.parseInt(x);
+			y = Number.parseInt(y);
 			if (_board[x][y] === "O") return false;
 			if (_board[x][y] === "X") return false;
 			if (_board[x][y] === "*") return false;
@@ -126,16 +142,19 @@ function _Gameboard() {
 
 			_board[x][y] = "X";
 			const attackedShip = _getAttackedShip([x, y]);
-			attackedShip.hit();
+			const health = attackedShip.hit();
+			if (health === 1)
+				return { board: this.getBoard(), squares: _getCornerSquares(x, y) };
 			if (!attackedShip.isSunk()) return false;
-			for (const [x, y] of attackedShip.getAdjacentSquares())
+			for (const [x, y] of attackedShip.getAdjacentSquares()) {
 				if (_board[x][y] === ".") _board[x][y] = "*";
+			}
 			return {
 				squares: [
 					...attackedShip.getOccupiedSquares(),
 					...attackedShip.getAdjacentSquares(),
 				],
-				board: _board,
+				board: this.getBoard(),
 			};
 		},
 
