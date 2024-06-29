@@ -30,7 +30,7 @@ function _getRandom(max, limit) {
 }
 
 function _Ship(coveredSq, adjacentSq, len = 1) {
-	const _MAX_LENGTH = 4;
+	const _MAX_LENGTH = 5;
 	const _MIN_LENGTH = 1;
 	const _length =
 		len > _MAX_LENGTH ? _MAX_LENGTH : len < _MIN_LENGTH ? _MIN_LENGTH : len;
