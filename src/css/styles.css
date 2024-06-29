@@ -4,6 +4,8 @@
   --clr-board-border: #c4c6fd;
   --bg-board: white;
   --side-gap: 200px;
+  --dot-scale: 0.65;
+  --bg-miss: #f3f7fe;
 }
 
 #gameboards {
@@ -73,14 +75,40 @@ button,
 }
 
 button.hit {
-  background-color: red;
+  background-color: #ffbdbd;
+}
+
+button.hit svg {
+  color: red;
+  stroke-width: 0.9pt;
+  height: 100%;
+  width: 100%;
+  transform: scale(1.5);
 }
 
 button.miss {
-  background-color: grey;
+  background-color: var(--bg-miss);
+}
+
+button.miss > svg {
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  fill: black;
+  transform: scale(var(--dot-scale));
 }
 
 button.visible-ship {
   background-color: blue;
   border: 2px solid blue;
+}
+
+button.verified-tile {
+  background-color: var(--bg-miss);
+}
+
+button.verified-tile > svg {
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  fill: #bababa;
+  transform: scale(var(--dot-scale));
 }

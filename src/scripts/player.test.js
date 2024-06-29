@@ -13,9 +13,10 @@ describe("Player factory", () => {
 		expect(player.interface).toMatch("Gameboard Interface");
 		player.placeShip([0, 0], 90, 1);
 		expect(player.getBoard()[0][1]).toMatch(".");
-		expect(player.isGameOver()).toBe(false);
+		expect(player.hasLost()).toBe(false);
 		player.receiveAttack([0, 0]);
-		expect(player.isGameOver()).toBe(true);
+		expect(player.hasLost()).toBe(true);
+		expect(player.getBoard()[0][1]).toMatch("*");
 		player.resetBoard();
 		expect(player.getBoard()[0][1]).toBe(null);
 	});

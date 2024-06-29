@@ -3,6 +3,7 @@
 // "X" hit
 // "O" miss
 // "1" ship that is not hit yet
+// "*" verfied empty square
 // null empty
 
 const _shipInterface = (state) => ({
@@ -18,7 +19,7 @@ const _gameboardInterface = (state) => ({
 	getBoard: () => state.getBoard(),
 	placeShip: (coord, angle, len) => state.placeShip(coord, angle, len),
 	receiveAttack: (coord) => state.receiveAttack(coord),
-	isGameOver: () => state.isGameOver(),
+	hasLost: () => state.hasLost(),
 	createRandomLayout: () => state.createRandomLayout(),
 	resetBoard: () => state.resetBoard(),
 });
@@ -115,19 +116,30 @@ function _Gameboard() {
 			_ships.push(_Ship(occupiedSq, adjacentSq, len));
 		},
 		receiveAttack: ([x, y]) => {
-			if (_board[x][y] === "O") return;
-			if (_board[x][y] === "X") return;
-			if (_board[x][y] === ".") return;
-			if (_board[x][y] === null) {
+			if (_board[x][y] === "O") return false;
+			if (_board[x][y] === "X") return false;
+			if (_board[x][y] === "*") return false;
+			if (_board[x][y] === null || _board[x][y] === ".") {
 				_board[x][y] = "O";
-				return;
+				return false;
 			}
 
 			_board[x][y] = "X";
-			_getAttackedShip([x, y]).hit();
+			const attackedShip = _getAttackedShip([x, y]);
+			attackedShip.hit();
+			if (!attackedShip.isSunk()) return false;
+			for (const [x, y] of attackedShip.getAdjacentSquares())
+				if (_board[x][y] === ".") _board[x][y] = "*";
+			return {
+				squares: [
+					...attackedShip.getOccupiedSquares(),
+					...attackedShip.getAdjacentSquares(),
+				],
+				board: _board,
+			};
 		},
 
-		isGameOver: () => {
+		hasLost: () => {
 			for (const ship of _ships) {
 				if (ship.isSunk() === false) return false;
 			}
