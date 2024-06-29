@@ -66,7 +66,7 @@ function _shipSunk({ board, squares }) {
 }
 
 rightBoard.addEventListener("mousedown", _clickHandlerRightGrid);
-btnRandomize.addEventListener("mousedown", () =>
+btnRandomize.addEventListener("click", () =>
 	pubsub.emit("Randomize Player One"),
 );
 
