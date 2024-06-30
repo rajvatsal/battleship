@@ -3,20 +3,20 @@ import pubsub from "./Pubsub.js";
 import icons from "./Icons.js";
 
 const classes = {
-	X: () => {
-		currentSquare.setAttribute("class", "hit");
-		currentSquare.innerHTML = icons.cross;
+	X: (cs = currentSquare) => {
+		cs.setAttribute("class", "hit");
+		cs.innerHTML = icons.cross;
 	},
-	O: () => {
-		currentSquare.setAttribute("class", "miss");
-		currentSquare.innerHTML = icons.dot;
+	O: (cs = currentSquare) => {
+		cs.setAttribute("class", "miss");
+		cs.innerHTML = icons.dot;
 	},
-	".": () => currentSquare.setAttribute("class", ""),
-	1: () => currentSquare.setAttribute("class", "visible-ship"),
-	null: () => currentSquare.setAttribute("class", ""),
-	"*": () => {
-		currentSquare.setAttribute("class", "verified-tile");
-		currentSquare.innerHTML = icons.dot;
+	".": (cs = currentSquare) => cs.setAttribute("class", ""),
+	1: (cs = currentSquare) => cs.setAttribute("class", "visible-ship"),
+	null: (cs = currentSquare) => cs.setAttribute("class", ""),
+	"*": (cs = currentSquare) => {
+		cs.setAttribute("class", "verified-tile");
+		cs.innerHTML = icons.dot;
 	},
 };
 
@@ -24,9 +24,12 @@ const $ = document.querySelector.bind(document);
 const leftBoard = $(".gameboards__left__board");
 const rightBoard = $(".gameboards__right__board");
 const btnRandomize = $(".options__buttons__randomize");
-// [[NOTE TO SELF]]
-// Try to find a method that doens't use a global variable to point things
-// It is really easy to mess things up this way
+
+// I have to do it this way because only the callback function
+// from event handler has access to e.target. So that e.target is
+// stored in this variable becuase to run the function after the
+// return statement from pubsub (add appropriate styling to that square in
+// updateBoard function()
 let currentSquare;
 
 populateGrid(leftBoard);
@@ -62,12 +65,10 @@ function _initializeBoard(board) {
 }
 
 function _showVerified({ board, squares }) {
-	const prevValue = currentSquare;
 	for (const [x, y] of squares) {
-		currentSquare = $(`.gameboards__right [data-coordinates="${x}-${y}"]`);
-		classes[board[x][y]]();
+		const selector = `.gameboards__right [data-coordinates="${x}-${y}"]`;
+		classes[board[x][y]]($(selector));
 	}
-	currentSquare = prevValue;
 }
 
 rightBoard.addEventListener("mousedown", _clickHandlerRightGrid);
