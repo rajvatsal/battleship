@@ -26,7 +26,7 @@ const rightBoard = $(".gameboards__right__board");
 const btnRandomize = $(".options__buttons__randomize");
 
 // I have to do it this way because only the callback function
-// from event handler has access to e.target. So that e.target is
+// from event handler has access to e.target. So the e.target is
 // stored in this variable becuase to run the function after the
 // return statement from pubsub (add appropriate styling to that square in
 // updateBoard function()
