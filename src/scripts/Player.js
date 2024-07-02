@@ -139,14 +139,12 @@ function _Gameboard() {
 			if (_board[x][y] !== 1) return false;
 
 			const attackedShip = _getAttackedShip([x, y]);
-			const health = attackedShip.hit();
+			attackedShip.hit();
 
 			_board[x][y] = "X";
 
-			if (!attackedShip.isSunk()) {
-				if (health !== 1) return false;
+			if (!attackedShip.isSunk())
 				return { board: this.getBoard(), squares: _getCornerSquares(x, y) };
-			}
 
 			for (const [x, y] of attackedShip.getAdjacentSquares()) {
 				if (_board[x][y] === ".") _board[x][y] = "*";
