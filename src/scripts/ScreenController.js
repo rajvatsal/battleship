@@ -24,6 +24,9 @@ const $ = document.querySelector.bind(document);
 const leftBoard = $(".gameboards__left__board");
 const rightBoard = $(".gameboards__right__board");
 const btnRandomize = $(".options__buttons__randomize");
+let activePlayer = "left";
+
+leftBoard.classList.add("active");
 
 // I have to do it this way because only the callback function
 // from event handler has access to e.target. So the e.target is
@@ -35,12 +38,24 @@ let currentSquare;
 populateGrid(leftBoard);
 populateGrid(rightBoard);
 
-function _clickHandlerRightGrid(event) {
+function switchTurns() {
+	activePlayer = activePlayer === "left" ? "right" : "left";
+	if (activePlayer === "left") {
+		leftBoard.classList.add("active");
+		rightBoard.classList.remove("active");
+	} else {
+		rightBoard.classList.add("active");
+		leftBoard.classList.remove("active");
+	}
+}
+
+function _clickHandlerAttack(event) {
+	if (!this.classList.contains(`gameboards__${activePlayer}__board`)) return;
 	const e = event.target;
 	if (e.tagName !== "BUTTON") return;
 	currentSquare = e;
 	const coords = e.getAttribute("data-coordinates").split("-");
-	const side = e.classList.contains("gameboards__left__board")
+	const side = this.classList.contains("gameboards__left__board")
 		? "player-one"
 		: "player-two";
 	pubsub.emit("ReceivedAttack", { side, coords });
@@ -48,6 +63,7 @@ function _clickHandlerRightGrid(event) {
 
 function _updateBoard(value) {
 	classes[value]();
+	if (value === "O") switchTurns();
 }
 
 function _gameOver(side) {
@@ -66,12 +82,15 @@ function _initializeBoard(board) {
 
 function _showVerified({ board, squares }) {
 	for (const [x, y] of squares) {
-		const selector = `.gameboards__right [data-coordinates="${x}-${y}"]`;
-		classes[board[x][y]]($(selector));
+		const square = $(
+			`.gameboards__${activePlayer}__board > [data-coordinates="${x}-${y}"]`,
+		);
+		classes[board[x][y]](square);
 	}
 }
 
-rightBoard.addEventListener("mousedown", _clickHandlerRightGrid);
+rightBoard.addEventListener("mousedown", _clickHandlerAttack);
+leftBoard.addEventListener("mousedown", _clickHandlerAttack);
 // [[NOTE TO SELF]]
 // When the user presses button a lot of times continuously then
 // the page freezes. Fix it.
