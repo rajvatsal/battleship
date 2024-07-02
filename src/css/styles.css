@@ -1,3 +1,4 @@
+/* [[NOTE]] Remove inside borders from visible ships */
 :root {
   --tile-length: 30px;
   --tile-number: 10;
