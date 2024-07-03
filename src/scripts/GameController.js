@@ -1,15 +1,22 @@
 import Player from "./Player.js";
 import pubsub from "./Pubsub.js";
 
-const playerOne = Player(1, "player-one");
-const playerTwo = Player(1, "player-two");
+const playerOne = Player(1, "left");
+const playerTwo = Player(1, "right");
+
+let activePlayer = playerOne;
+const _switchTurn = () => (activePlayer === playerOne ? playerTwo : playerOne);
 
 function _receivedAttack({ side, coords }) {
-	const attackedPlayer = playerOne.side === side ? playerOne : playerTwo;
-	const isShipHit = attackedPlayer.receiveAttack(coords);
-	if (isShipHit) pubsub.emit("ShowVerifiedSquares", isShipHit);
-	pubsub.emit("UpdateBoard", attackedPlayer.getBoard()[coords[0]][coords[1]]);
-	if (attackedPlayer.hasLost()) pubsub.emit("GameOver", attackedPlayer.side);
+	if (side !== activePlayer.side) return;
+	const isShipHit = activePlayer.receiveAttack(coords);
+	pubsub.emit("UpdateBoard", {
+		symbol: activePlayer.getBoard()[coords[0]][coords[1]],
+		side,
+		isShipHit,
+	});
+	if (activePlayer.hasLost()) pubsub.emit("GameOver", activePlayer.side);
+	activePlayer = isShipHit === false ? _switchTurn() : activePlayer;
 }
 
 playerOne.createRandomLayout();
@@ -17,10 +24,16 @@ playerTwo.createRandomLayout();
 
 pubsub.on("ReceivedAttack", _receivedAttack);
 pubsub.on("Initialize Page", () =>
-	pubsub.emit("Initialized Game", playerOne.getBoard()),
+	pubsub.emit("Initialized Game", {
+		board: activePlayer.getBoard(),
+		side: activePlayer.side,
+	}),
 );
 pubsub.on("Randomize Player One", () => {
 	playerOne.resetBoard();
 	playerOne.createRandomLayout();
-	pubsub.emit("Randomized Player One", playerOne.getBoard());
+	pubsub.emit("Randomized Player One", {
+		board: activePlayer.getBoard(),
+		side: activePlayer.side,
+	});
 });
