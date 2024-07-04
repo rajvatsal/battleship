@@ -135,3 +135,17 @@ button.verified-tile > svg {
   fill: #bababa;
   transform: scale(var(--dot-scale));
 }
+
+button.game-not-started {
+  position: absolute;
+  top: 40%;
+  left: 20px;
+  z-index: 1001;
+  padding: 5px 20px;
+  font-size: inherit;
+  font-family: inherit;
+}
+
+button.game-started {
+  display: none;
+}

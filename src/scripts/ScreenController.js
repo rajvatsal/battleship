@@ -24,6 +24,7 @@ const $ = document.querySelector.bind(document);
 const leftBoard = $(".gameboards__left__board");
 const rightBoard = $(".gameboards__right__board");
 const btnRandomize = $(".options__buttons__randomize");
+const btnStartGame = $("button.game-not-started");
 
 // I have to do it this way because only the callback function
 // from event handler has access to e.target. So the e.target is
@@ -35,6 +36,31 @@ let currentSquare;
 populateGrid(leftBoard);
 populateGrid(rightBoard);
 
+function _clickHandlerRandomBoard() {
+	pubsub.emit("Randomize Player One");
+}
+
+function _clickHandlerStartGame() {
+	rightBoard.addEventListener("mousedown", _clickHandlerAttack);
+	leftBoard.addEventListener("mousedown", _clickHandlerAttack);
+	btnRandomize.removeEventListener("click", _clickHandlerRandomBoard);
+	this.setAttribute("class", "game-started");
+}
+
+function _clickHandlerAttack(e) {
+	const target = e.target;
+	if (target.tagName !== "BUTTON") return;
+	if (target.classList.contains("game-not-started")) return;
+	if (target.classList.contains("game-started")) return;
+
+	const side = this.classList.contains("gameboards__left__board")
+		? "left"
+		: "right";
+	const coords = target.getAttribute("data-coordinates").split("-");
+	currentSquare = target;
+	pubsub.emit("ReceivedAttack", { coords, side });
+}
+
 function _showActivePlayer(side) {
 	if (side === "left") {
 		leftBoard.classList.add("active");
@@ -43,18 +69,6 @@ function _showActivePlayer(side) {
 		rightBoard.classList.add("active");
 		leftBoard.classList.remove("active");
 	}
-}
-
-function _clickHandlerAttack(e) {
-	const target = e.target;
-	if (target.tagName !== "BUTTON") return;
-
-	const side = this.classList.contains("gameboards__left__board")
-		? "left"
-		: "right";
-	const coords = target.getAttribute("data-coordinates").split("-");
-	currentSquare = target;
-	pubsub.emit("ReceivedAttack", { coords, side });
 }
 
 function _updateBoard({ symbol, side, isShipHit }) {
@@ -84,6 +98,11 @@ function _initializeGame({ board, side }) {
 	const activeBoard = side === "left" ? leftBoard : rightBoard;
 	activeBoard.classList.add("active");
 	_renderBoard({ board, side });
+	// [[NOTE TO SELF]]
+	// When the user presses button a lot of times continuously then
+	// the page freezes. Fix it.
+	btnRandomize.addEventListener("click", _clickHandlerRandomBoard);
+	btnStartGame.addEventListener("mousedown", _clickHandlerStartGame);
 }
 
 function _renderVerifiedSquares({ board, squares }, side) {
@@ -94,15 +113,6 @@ function _renderVerifiedSquares({ board, squares }, side) {
 		classes[board[x][y]](square);
 	}
 }
-
-rightBoard.addEventListener("mousedown", _clickHandlerAttack);
-leftBoard.addEventListener("mousedown", _clickHandlerAttack);
-// [[NOTE TO SELF]]
-// When the user presses button a lot of times continuously then
-// the page freezes. Fix it.
-btnRandomize.addEventListener("click", () =>
-	pubsub.emit("Randomize Player One"),
-);
 
 pubsub.on("UpdateBoard", _updateBoard);
 pubsub.on("GameOver", _gameOver);
