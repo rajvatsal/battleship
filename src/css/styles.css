@@ -136,7 +136,7 @@ button.verified-tile > svg {
   transform: scale(var(--dot-scale));
 }
 
-button.game-not-started {
+button[data-game-state="not-started"] {
   position: absolute;
   top: 40%;
   left: 20px;
@@ -146,6 +146,6 @@ button.game-not-started {
   font-family: inherit;
 }
 
-button.game-started {
+button[data-game-state="started"] {
   display: none;
 }

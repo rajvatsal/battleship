@@ -24,7 +24,8 @@ const $ = document.querySelector.bind(document);
 const leftBoard = $(".gameboards__left__board");
 const rightBoard = $(".gameboards__right__board");
 const btnRandomize = $(".options__buttons__randomize");
-const btnStartGame = $("button.game-not-started");
+const btnStartGame = $("button.btn-start");
+const btnResetGame = $("options__buttons__reset");
 
 // I have to do it this way because only the callback function
 // from event handler has access to e.target. So the e.target is
@@ -40,18 +41,19 @@ function _clickHandlerRandomBoard() {
 	pubsub.emit("Randomize Player One");
 }
 
+function _clickHandlerResetGame() {}
+
 function _clickHandlerStartGame() {
 	rightBoard.addEventListener("mousedown", _clickHandlerAttack);
 	leftBoard.addEventListener("mousedown", _clickHandlerAttack);
 	btnRandomize.removeEventListener("click", _clickHandlerRandomBoard);
-	this.setAttribute("class", "game-started");
+	this.setAttribute("data-game-state", "started");
 }
 
 function _clickHandlerAttack(e) {
 	const target = e.target;
 	if (target.tagName !== "BUTTON") return;
-	if (target.classList.contains("game-not-started")) return;
-	if (target.classList.contains("game-started")) return;
+	if (target.classList.contains("btn-start")) return;
 
 	const side = this.classList.contains("gameboards__left__board")
 		? "left"
@@ -102,6 +104,7 @@ function _initializeGame({ board, side }) {
 	// When the user presses button a lot of times continuously then
 	// the page freezes. Fix it.
 	btnRandomize.addEventListener("click", _clickHandlerRandomBoard);
+	btnStartGame.setAttribute("data-game-state", "not-started");
 	btnStartGame.addEventListener("mousedown", _clickHandlerStartGame);
 }
 
