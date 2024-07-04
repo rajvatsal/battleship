@@ -35,7 +35,7 @@ let currentSquare;
 populateGrid(leftBoard);
 populateGrid(rightBoard);
 
-function _switchTurn(side) {
+function _showActivePlayer(side) {
 	if (side === "left") {
 		leftBoard.classList.add("active");
 		rightBoard.classList.remove("active");
@@ -61,7 +61,7 @@ function _updateBoard({ symbol, side, isShipHit }) {
 	classes[symbol]();
 
 	if (isShipHit !== false) return _renderVerifiedSquares(isShipHit, side);
-	_switchTurn(side === "left" ? "right" : "left");
+	_showActivePlayer(side === "left" ? "right" : "left");
 }
 
 function _gameOver(side) {
