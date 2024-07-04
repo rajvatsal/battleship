@@ -69,7 +69,7 @@ function _gameOver(side) {
 	else alert("You Lost :_(");
 }
 
-function renderEntireBoard({ board, side }) {
+function _renderBoard({ board, side }) {
 	const buttons = document.querySelectorAll(
 		`.gameboards__${side}__board > button`,
 	);
@@ -83,7 +83,7 @@ function renderEntireBoard({ board, side }) {
 function _initializeGame({ board, side }) {
 	const activeBoard = side === "left" ? leftBoard : rightBoard;
 	activeBoard.classList.add("active");
-	renderEntireBoard({ board, side });
+	_renderBoard({ board, side });
 }
 
 function _renderVerifiedSquares({ board, squares }, side) {
@@ -107,4 +107,4 @@ btnRandomize.addEventListener("click", () =>
 pubsub.on("UpdateBoard", _updateBoard);
 pubsub.on("GameOver", _gameOver);
 pubsub.on("Initialized Game", _initializeGame);
-pubsub.on("Randomized Player One", renderEntireBoard);
+pubsub.on("Randomized Player One", _renderBoard);
