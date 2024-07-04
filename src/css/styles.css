@@ -67,7 +67,7 @@ header {
 .board:not(.active)::after {
   content: "Don't look :)";
   color: white;
-  background-color: black;
+  background-color: transparent;
   position: absolute;
   top: -2px;
   left: -2px;

@@ -25,7 +25,7 @@ const leftBoard = $(".gameboards__left__board");
 const rightBoard = $(".gameboards__right__board");
 const btnRandomize = $(".options__buttons__randomize");
 const btnStartGame = $("button.btn-start");
-const btnResetGame = $("options__buttons__reset");
+const btnResetGame = $(".options__buttons__reset");
 
 // I have to do it this way because only the callback function
 // from event handler has access to e.target. So the e.target is
@@ -41,7 +41,11 @@ function _clickHandlerRandomBoard() {
 	pubsub.emit("Randomize Player One");
 }
 
-function _clickHandlerResetGame() {}
+function _clickHandlerResetGame() {
+	pubsub.emit("ResetGamePre");
+	leftBoard.removeEventListener("mousedown", _clickHandlerAttack);
+	rightBoard.removeEventListener("mousedown", _clickHandlerAttack);
+}
 
 function _clickHandlerStartGame() {
 	rightBoard.addEventListener("mousedown", _clickHandlerAttack);
@@ -61,6 +65,15 @@ function _clickHandlerAttack(e) {
 	const coords = target.getAttribute("data-coordinates").split("-");
 	currentSquare = target;
 	pubsub.emit("ReceivedAttack", { coords, side });
+}
+
+function _resetGamePost([left]) {
+	_initializeGame({ board: left, side: "left" });
+	const buttons = rightBoard.querySelectorAll("button:not(.btn-start)");
+	for (const button of buttons) {
+		button.innerHTML = "";
+		button.setAttribute("class", "");
+	}
 }
 
 function _showActivePlayer(side) {
@@ -87,12 +100,13 @@ function _gameOver(side) {
 
 function _renderBoard({ board, side }) {
 	const buttons = document.querySelectorAll(
-		`.gameboards__${side}__board > button`,
+		`.gameboards__${side}__board > button:not(.btn-start)`,
 	);
-	for (let i = 0; i < buttons.length; i++) {
-		const [x, y] = buttons[i].getAttribute("data-coordinates").split("-");
-		currentSquare = buttons[i];
+	for (const button of buttons) {
+		const [x, y] = button.getAttribute("data-coordinates").split("-");
+		currentSquare = button;
 		classes[board[x][y]]();
+		button.innerHTML = "";
 	}
 }
 
@@ -106,6 +120,7 @@ function _initializeGame({ board, side }) {
 	btnRandomize.addEventListener("click", _clickHandlerRandomBoard);
 	btnStartGame.setAttribute("data-game-state", "not-started");
 	btnStartGame.addEventListener("mousedown", _clickHandlerStartGame);
+	btnResetGame.addEventListener("mousedown", _clickHandlerResetGame);
 }
 
 function _renderVerifiedSquares({ board, squares }, side) {
@@ -121,3 +136,4 @@ pubsub.on("UpdateBoard", _updateBoard);
 pubsub.on("GameOver", _gameOver);
 pubsub.on("Initialized Game", _initializeGame);
 pubsub.on("Randomized Player One", _renderBoard);
+pubsub.on("ResetGamePost", _resetGamePost);

@@ -3,6 +3,7 @@ import pubsub from "./Pubsub.js";
 
 const playerOne = Player(1, "left");
 const playerTwo = Player(1, "right");
+const players = [playerOne, playerTwo];
 
 let activePlayer = playerOne;
 const _switchTurn = () => (activePlayer === playerOne ? playerTwo : playerOne);
@@ -17,6 +18,14 @@ function _receivedAttack({ side, coords }) {
 	});
 	if (activePlayer.hasLost()) pubsub.emit("GameOver", activePlayer.side);
 	activePlayer = isShipHit === false ? _switchTurn() : activePlayer;
+}
+
+function _resetGame() {
+	for (const player of players) {
+		player.resetBoard();
+		player.createRandomLayout();
+	}
+	pubsub.emit("ResetGamePost", [playerOne.getBoard(), playerTwo.getBoard()]);
 }
 
 playerOne.createRandomLayout();
@@ -37,3 +46,4 @@ pubsub.on("Randomize Player One", () => {
 		side: activePlayer.side,
 	});
 });
+pubsub.on("ResetGamePre", _resetGame);
