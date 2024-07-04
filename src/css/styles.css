@@ -65,10 +65,11 @@ header {
 }
 
 .board:not(.active)::after {
-  content: "Don't look :)";
+  content: "";
   color: white;
-  background-color: transparent;
   position: absolute;
+  background-color: #ffffffa8;
+  backdrop-filter: blur(0.7px);
   top: -2px;
   left: -2px;
   height: calc(100% + 4px);
@@ -118,8 +119,8 @@ button.miss > svg {
 
 button.visible-ship {
   background-color: #c8c8ff;
-  border: 2px solid blue;
   width: 100%;
+  border: 2px solid #1212ff;
   height: 100%;
   box-sizing: content-box;
   transform: translate(-2px, -2px);
@@ -144,6 +145,8 @@ button[data-game-state="not-started"] {
   padding: 5px 20px;
   font-size: inherit;
   font-family: inherit;
+  background-color: black;
+  color: white;
 }
 
 button[data-game-state="started"] {
