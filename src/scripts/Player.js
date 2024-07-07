@@ -6,6 +6,13 @@
 // "*" verfied empty square
 // null empty
 
+import { pipeline } from "./Helpers.js";
+
+const _gameboardAndComputerChoiceInterface = (state) => ({
+	interface: "gameboard and computer choice",
+	getChoice: (board) => state.getChoice(board),
+});
+
 const _shipInterface = (state) => ({
 	interface: "Ship Interface",
 	isSunk: () => state.isSunk(),
@@ -200,7 +207,30 @@ function _Gameboard() {
 	return Object.assign(_gameboardInterface(state));
 }
 
+const _pipeComputer = pipeline(_gameboardAndComputerChoiceInterface);
 export default function Player(type, side) {
 	const playerType = type ? "computer" : "human";
-	return Object.assign(_Gameboard(), { playerType, side });
+
+	const state = {
+		getChoice: (board) => {
+			try {
+				if (board === undefined) throw new Error("No board provided");
+			} catch (err) {
+				return console.error(err);
+			}
+
+			const validSquares = board.reduce((acc, row, x) => {
+				for (let y = 0; y < row.length; y++) {
+					if (row[y] === null || row[y] === 1) acc.push([x, y]);
+				}
+				return acc;
+			}, []);
+
+			const choice = Math.floor(Math.random() * validSquares.length);
+			return validSquares[choice];
+		},
+	};
+
+	const composite = playerType === "computer" ? _pipeComputer(state) : {};
+	return Object.assign({}, _Gameboard(), composite, { playerType, side });
 }

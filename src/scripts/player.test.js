@@ -20,4 +20,11 @@ describe("Player factory", () => {
 		player.resetBoard();
 		expect(player.getBoard()[0][1]).toBe(null);
 	});
+
+	it("computer player has choice", () => {
+		const player = Player(1);
+		expect(player.playerType).toMatch("computer");
+		expect(player.playerType).not.toMatch("human");
+		expect(player.getChoice(player.getBoard())).toBeInstanceOf(Array);
+	});
 });
