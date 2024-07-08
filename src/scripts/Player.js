@@ -141,7 +141,7 @@ function _Gameboard() {
 			y = Number.parseInt(y);
 			if (_board[x][y] === null || _board[x][y] === ".") {
 				_board[x][y] = "O";
-				return false;
+				return "miss";
 			}
 			if (_board[x][y] !== 1) return false;
 
@@ -160,11 +160,11 @@ function _Gameboard() {
 				if (_board[x][y] === ".") _board[x][y] = "*";
 			}
 			return {
+				board: this.getBoard(),
 				squares: [
 					...attackedShip.getOccupiedSquares(),
 					...attackedShip.getAdjacentSquares(),
 				],
-				board: this.getBoard(),
 			};
 		},
 

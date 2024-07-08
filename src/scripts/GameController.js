@@ -1,23 +1,42 @@
 import Player from "./Player.js";
 import pubsub from "./Pubsub.js";
 
-const playerOne = Player(1, "left");
+const playerOne = Player(0, "left");
 const playerTwo = Player(1, "right");
 const players = [playerOne, playerTwo];
+const computerDelay = 900;
+let activePlayer = playerTwo;
+let attackedPlayer = playerOne;
 
-let activePlayer = playerOne;
-const _switchTurn = () => (activePlayer === playerOne ? playerTwo : playerOne);
+export const getActivePlayer = () => activePlayer.side;
+
+function _switchTurn() {
+	const z = activePlayer;
+	activePlayer = attackedPlayer;
+	attackedPlayer = z;
+}
 
 function _receivedAttack({ side, coords }) {
-	if (side !== activePlayer.side) return;
-	const isShipHit = activePlayer.receiveAttack(coords);
+	if (side !== attackedPlayer.side) return;
+	const attackData = attackedPlayer.receiveAttack(coords);
+	const [x, y] = coords;
+	if (attackData === false) return;
 	pubsub.emit("UpdateBoard", {
-		symbol: activePlayer.getBoard()[coords[0]][coords[1]],
+		symbol: attackedPlayer.getBoard()[x][y],
 		side,
-		isShipHit,
+		attackData,
+		coords,
 	});
-	if (activePlayer.hasLost()) pubsub.emit("GameOver", activePlayer.side);
-	activePlayer = isShipHit === false ? _switchTurn() : activePlayer;
+	if (attackData === "miss") _switchTurn();
+	if (attackedPlayer.hasLost()) pubsub.emit("GameOver", attackedPlayer.side);
+	if (activePlayer.playerType === "computer")
+		setTimeout(_runComputer, computerDelay);
+}
+
+function _runComputer() {
+	const side = attackedPlayer.side;
+	const coords = activePlayer.getChoice(attackedPlayer.getBoard());
+	_receivedAttack({ side, coords });
 }
 
 function _resetGame() {
@@ -32,18 +51,25 @@ playerOne.createRandomLayout();
 playerTwo.createRandomLayout();
 
 pubsub.on("ReceivedAttack", _receivedAttack);
-pubsub.on("Initialize Page", () =>
+pubsub.on("Initialize Page", () => {
 	pubsub.emit("Initialized Game", {
 		board: activePlayer.getBoard(),
-		side: activePlayer.side,
-	}),
-);
-pubsub.on("Randomize Player One", () => {
-	playerOne.resetBoard();
-	playerOne.createRandomLayout();
-	pubsub.emit("Randomized Player One", {
-		board: activePlayer.getBoard(),
-		side: activePlayer.side,
+		side: attackedPlayer.side,
+	});
+});
+
+pubsub.on("StartGamePre", () => {
+	if (activePlayer.playerType === "computer")
+		setTimeout(_runComputer, computerDelay);
+});
+
+pubsub.on("RandomBoardHumanPre", () => {
+	const human = playerOne.playerType === "human" ? playerOne : playerTwo;
+	human.resetBoard();
+	human.createRandomLayout();
+	pubsub.emit("RandomBoardHumanPost", {
+		board: human.getBoard(),
+		side: human.side,
 	});
 });
 pubsub.on("ResetGamePre", _resetGame);

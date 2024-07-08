@@ -1,6 +1,7 @@
 import populateGrid from "./DisplayGameboard.js";
 import pubsub from "./Pubsub.js";
 import icons from "./Icons.js";
+import { getActivePlayer } from "./GameController.js";
 
 const classes = {
 	X: (cs = currentSquare) => {
@@ -38,7 +39,7 @@ populateGrid(leftBoard);
 populateGrid(rightBoard);
 
 function _clickHandlerRandomBoard() {
-	pubsub.emit("Randomize Player One");
+	pubsub.emit("RandomBoardHumanPre");
 }
 
 function _clickHandlerResetGame() {
@@ -49,9 +50,9 @@ function _clickHandlerResetGame() {
 
 function _clickHandlerStartGame() {
 	rightBoard.addEventListener("mousedown", _clickHandlerAttack);
-	leftBoard.addEventListener("mousedown", _clickHandlerAttack);
 	btnRandomize.removeEventListener("click", _clickHandlerRandomBoard);
 	this.setAttribute("data-game-state", "started");
+	pubsub.emit("StartGamePre");
 }
 
 function _clickHandlerAttack(e) {
@@ -86,11 +87,17 @@ function _showActivePlayer(side) {
 	}
 }
 
-function _updateBoard({ symbol, side, isShipHit }) {
-	classes[symbol]();
+function _updateBoard({ symbol, side, attackData, coords }) {
+	const [x, y] = coords;
+	const board = side === "left" ? leftBoard : rightBoard;
+	const square = board.querySelector(`[data-coordinates="${x}-${y}"]`);
+	// mark square that was attacked
+	classes[symbol](square);
 
-	if (isShipHit !== false) return _renderVerifiedSquares(isShipHit, side);
-	_showActivePlayer(side === "left" ? "right" : "left");
+	// if attacke was successful then show verfied squares
+	if (attackData === false) return;
+	if (attackData === "miss") return _showActivePlayer(getActivePlayer());
+	_renderVerifiedSquares(attackData, side);
 }
 
 function _gameOver(side) {
@@ -111,8 +118,8 @@ function _renderBoard({ board, side }) {
 }
 
 function _initializeGame({ board, side }) {
-	const activeBoard = side === "left" ? leftBoard : rightBoard;
-	activeBoard.classList.add("active");
+	const attackedBoard = side === "left" ? leftBoard : rightBoard;
+	attackedBoard.classList.add("active");
 	_renderBoard({ board, side });
 	// [[NOTE TO SELF]]
 	// When the user presses button a lot of times continuously then
@@ -135,5 +142,5 @@ function _renderVerifiedSquares({ board, squares }, side) {
 pubsub.on("UpdateBoard", _updateBoard);
 pubsub.on("GameOver", _gameOver);
 pubsub.on("Initialized Game", _initializeGame);
-pubsub.on("Randomized Player One", _renderBoard);
+pubsub.on("RandomBoardHumanPost", _renderBoard);
 pubsub.on("ResetGamePost", _resetGamePost);
