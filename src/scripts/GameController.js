@@ -28,7 +28,8 @@ function _receivedAttack({ side, coords }) {
 		coords,
 	});
 	if (attackData === "miss") _switchTurn();
-	if (attackedPlayer.hasLost()) pubsub.emit("GameOver", attackedPlayer.side);
+	if (attackedPlayer.hasLost())
+		return pubsub.emit("GameOver", attackedPlayer.side);
 	if (activePlayer.playerType === "computer")
 		setTimeout(_runComputer, computerDelay);
 }
