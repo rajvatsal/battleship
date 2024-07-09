@@ -4,7 +4,7 @@ import pubsub from "./Pubsub.js";
 const playerOne = Player(0, "left");
 const playerTwo = Player(1, "right");
 const players = [playerOne, playerTwo];
-const computerDelay = 900;
+const computerDelay = 1200;
 let activePlayer = playerTwo;
 let attackedPlayer = playerOne;
 
@@ -27,9 +27,9 @@ function _receivedAttack({ side, coords }) {
 		attackData,
 		coords,
 	});
-	if (attackData === "miss") _switchTurn();
 	if (attackedPlayer.hasLost())
 		return pubsub.emit("GameOver", attackedPlayer.side);
+	if (attackData === "miss") _switchTurn();
 	if (activePlayer.playerType === "computer")
 		setTimeout(_runComputer, computerDelay);
 }
@@ -54,8 +54,8 @@ playerTwo.createRandomLayout();
 pubsub.on("ReceivedAttack", _receivedAttack);
 pubsub.on("Initialize Page", () => {
 	pubsub.emit("Initialized Game", {
-		board: activePlayer.getBoard(),
-		side: attackedPlayer.side,
+		board: playerOne.getBoard(),
+		side: playerOne.side,
 	});
 });
 
