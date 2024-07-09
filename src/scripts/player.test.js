@@ -21,6 +21,23 @@ describe("Player factory", () => {
 		expect(player.getBoard()[0][1]).toBe(null);
 	});
 
+	it("Random Layout", () => {
+		const player = Player(0);
+		const boardBefore = structuredClone(player.getBoard());
+		player.createRandomLayout();
+
+		const boardAfter_1 = structuredClone(player.getBoard());
+
+		player.resetBoard();
+		player.createRandomLayout();
+
+		const boardAfter_2 = structuredClone(player.getBoard());
+
+		expect(boardBefore).not.toEqual(boardAfter_1);
+		expect(boardAfter_1).not.toEqual(boardAfter_2);
+		expect(boardAfter_2).toEqual(player.getBoard());
+	});
+
 	it("computer player has choice", () => {
 		const player = Player(1);
 		expect(player.playerType).toMatch("computer");
