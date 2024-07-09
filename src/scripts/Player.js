@@ -221,7 +221,8 @@ export default function Player(type, side) {
 
 			const validSquares = board.reduce((acc, row, x) => {
 				for (let y = 0; y < row.length; y++) {
-					if (row[y] === null || row[y] === 1) acc.push([x, y]);
+					if (row[y] === null || row[y] === 1 || row[y] === ".")
+						acc.push([x, y]);
 				}
 				return acc;
 			}, []);
