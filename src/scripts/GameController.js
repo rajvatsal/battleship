@@ -52,8 +52,8 @@ playerOne.createRandomLayout();
 playerTwo.createRandomLayout();
 
 pubsub.on("ReceivedAttack", _receivedAttack);
-pubsub.on("Initialize Page", () => {
-	pubsub.emit("Initialized Game", {
+pubsub.on("InitializePagePre", () => {
+	pubsub.emit("InitializePagePost", {
 		board: playerOne.getBoard(),
 		side: playerOne.side,
 	});

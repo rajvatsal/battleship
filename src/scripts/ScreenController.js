@@ -141,6 +141,6 @@ function _renderVerifiedSquares({ board, squares }, side) {
 
 pubsub.on("UpdateBoard", _updateBoard);
 pubsub.on("GameOver", _gameOver);
-pubsub.on("Initialized Game", _initializeGame);
+pubsub.on("InitializePagePost", _initializeGame);
 pubsub.on("RandomBoardHumanPost", _renderBoard);
 pubsub.on("ResetGamePost", _resetGamePost);

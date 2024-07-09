@@ -3,4 +3,4 @@ import "./scripts/GameController.js";
 import "./css/styles.css";
 import pubsub from "./scripts/Pubsub.js";
 
-pubsub.emit("Initialize Page");
+pubsub.emit("InitializePagePre");
