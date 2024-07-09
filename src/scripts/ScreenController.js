@@ -65,7 +65,7 @@ function _clickHandlerAttack(e) {
 		: "right";
 	const coords = target.getAttribute("data-coordinates").split("-");
 	currentSquare = target;
-	pubsub.emit("ReceivedAttack", { coords, side });
+	pubsub.emit("ReceivedAttackPre", { coords, side });
 }
 
 function _resetGamePost([left]) {
@@ -139,7 +139,7 @@ function _renderVerifiedSquares({ board, squares }, side) {
 	}
 }
 
-pubsub.on("UpdateBoard", _updateBoard);
+pubsub.on("ReceivedAttackPost", _updateBoard);
 pubsub.on("GameOver", _gameOver);
 pubsub.on("InitializePagePost", _initializeGame);
 pubsub.on("RandomBoardHumanPost", _renderBoard);

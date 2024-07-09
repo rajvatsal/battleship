@@ -21,7 +21,7 @@ function _receivedAttack({ side, coords }) {
 	const attackData = attackedPlayer.receiveAttack(coords);
 	const [x, y] = coords;
 	if (attackData === false) return;
-	pubsub.emit("UpdateBoard", {
+	pubsub.emit("ReceivedAttackPost", {
 		symbol: attackedPlayer.getBoard()[x][y],
 		side,
 		attackData,
@@ -51,7 +51,7 @@ function _resetGame() {
 playerOne.createRandomLayout();
 playerTwo.createRandomLayout();
 
-pubsub.on("ReceivedAttack", _receivedAttack);
+pubsub.on("ReceivedAttackPre", _receivedAttack);
 pubsub.on("InitializePagePre", () => {
 	pubsub.emit("InitializePagePost", {
 		board: playerOne.getBoard(),
