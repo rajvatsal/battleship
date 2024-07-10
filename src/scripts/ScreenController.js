@@ -79,11 +79,11 @@ function _resetGamePost([left]) {
 
 function _showActivePlayer(side) {
 	if (side === "left") {
-		leftBoard.classList.add("active");
-		rightBoard.classList.remove("active");
+		leftBoard.classList.add("appear");
+		rightBoard.classList.remove("appear");
 	} else {
-		rightBoard.classList.add("active");
-		leftBoard.classList.remove("active");
+		rightBoard.classList.add("appear");
+		leftBoard.classList.remove("appear");
 	}
 }
 
@@ -119,7 +119,7 @@ function _renderBoard({ board, side }) {
 
 function _initializeGame({ board, side }) {
 	const attackedBoard = side === "left" ? leftBoard : rightBoard;
-	attackedBoard.classList.add("active");
+	attackedBoard.classList.add("appear");
 	_renderBoard({ board, side });
 	// [[NOTE TO SELF]]
 	// When the user presses button a lot of times continuously then
