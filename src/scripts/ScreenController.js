@@ -1,7 +1,7 @@
 import populateGrid from "./DisplayGameboard.js";
 import pubsub from "./Pubsub.js";
 import icons from "./Icons.js";
-import { getActivePlayer } from "./GameController.js";
+import { getActiveBoard } from "./GameController.js";
 
 const classes = {
 	X: (cs = currentSquare) => {
@@ -105,7 +105,7 @@ function _updateBoard({ symbol, side, attackData, coords }) {
 
 	// if attacke was successful then show verfied squares
 	if (attackData === false) return;
-	if (attackData === "miss") return _showActivePlayer(getActivePlayer());
+	if (attackData === "miss") return _showActivePlayer(getActiveBoard());
 	_renderVerifiedSquares(attackData, side);
 }
 

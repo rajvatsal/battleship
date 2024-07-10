@@ -8,7 +8,7 @@ const computerDelay = 1200;
 let activePlayer = playerTwo;
 let attackedPlayer = playerOne;
 
-export const getActivePlayer = () => activePlayer.side;
+export const getActiveBoard = () => attackedPlayer.side;
 
 function _switchTurn() {
 	const z = activePlayer;
@@ -18,20 +18,26 @@ function _switchTurn() {
 
 function _receivedAttack({ side, coords }) {
 	if (side !== attackedPlayer.side) return;
+
 	const attackData = attackedPlayer.receiveAttack(coords);
-	const [x, y] = coords;
+
 	if (attackData === false) return;
-	pubsub.emit("ReceivedAttackPost", {
-		symbol: attackedPlayer.getBoard()[x][y],
-		side,
-		attackData,
-		coords,
-	});
+
+	const [x, y] = coords;
+	const symbol = attackedPlayer.getBoard()[x][y];
+
 	if (attackedPlayer.hasLost())
 		return pubsub.emit("GameOver", attackedPlayer.side);
 	if (attackData === "miss") _switchTurn();
 	if (activePlayer.playerType === "computer")
 		setTimeout(_runComputer, computerDelay);
+
+	pubsub.emit("ReceivedAttackPost", {
+		symbol,
+		side,
+		attackData,
+		coords,
+	});
 }
 
 function _runComputer() {
