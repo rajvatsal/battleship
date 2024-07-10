@@ -45,6 +45,9 @@ function _resetGame() {
 		player.resetBoard();
 		player.createRandomLayout();
 	}
+
+	activePlayer = playerTwo;
+	attackedPlayer = playerOne;
 	pubsub.emit("ResetGamePost", [playerOne.getBoard(), playerTwo.getBoard()]);
 }
 

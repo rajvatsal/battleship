@@ -43,13 +43,20 @@ function _clickHandlerRandomBoard() {
 }
 
 function _clickHandlerResetGame() {
-	pubsub.emit("ResetGamePre");
-	leftBoard.removeEventListener("mousedown", _clickHandlerAttack);
 	rightBoard.removeEventListener("mousedown", _clickHandlerAttack);
+	btnRandomize.addEventListener("click", _clickHandlerRandomBoard);
+	leftBoard.classList.add("appear");
+	rightBoard.classList.remove("appear");
+	btnStartGame.setAttribute("data-game-state", "not-started");
+
+	pubsub.emit("ResetGamePre");
 }
 
 function _clickHandlerStartGame() {
 	rightBoard.addEventListener("mousedown", _clickHandlerAttack);
+	btnResetGame.addEventListener("click", _clickHandlerResetGame, {
+		once: true,
+	});
 	btnRandomize.removeEventListener("click", _clickHandlerRandomBoard);
 	this.setAttribute("data-game-state", "started");
 	pubsub.emit("StartGamePre");
@@ -69,8 +76,10 @@ function _clickHandlerAttack(e) {
 }
 
 function _resetGamePost([left]) {
-	_initializeGame({ board: left, side: "left" });
+	_renderBoard({ board: left, side: "left" });
 	const buttons = rightBoard.querySelectorAll("button:not(.btn-start)");
+
+	// remove icons and styles
 	for (const button of buttons) {
 		button.innerHTML = "";
 		button.setAttribute("class", "");
@@ -127,7 +136,6 @@ function _initializeGame({ board, side }) {
 	btnRandomize.addEventListener("click", _clickHandlerRandomBoard);
 	btnStartGame.setAttribute("data-game-state", "not-started");
 	btnStartGame.addEventListener("mousedown", _clickHandlerStartGame);
-	btnResetGame.addEventListener("mousedown", _clickHandlerResetGame);
 }
 
 function _renderVerifiedSquares({ board, squares }, side) {
