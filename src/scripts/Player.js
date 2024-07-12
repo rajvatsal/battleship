@@ -1,12 +1,13 @@
-// Fix magic values
-// "." adjacent square
-// "X" hit
-// "O" miss
-// "1" ship that is not hit yet
-// "*" verfied empty square
-// null empty
-
 import { pipeline } from "./Helpers.js";
+
+export const markers = {
+	adjacent: ".",
+	hit: "X",
+	miss: "O",
+	ship: 1,
+	verified: "*",
+	empty: null,
+};
 
 const _gameboardAndComputerChoiceInterface = (state) => ({
 	interface: "gameboard and computer choice",
@@ -63,7 +64,7 @@ function _Gameboard() {
 	let _ships = [];
 	const _board = [];
 	for (let i = 0; i < 10; i++) {
-		_board.push(Array(10).fill(null));
+		_board.push(Array(10).fill(markers.empty));
 	}
 
 	const _getAttackedShip = ([a, b]) => {
@@ -102,7 +103,8 @@ function _Gameboard() {
 			// check if the square is out of bounds
 			if (currentSquare[0] > 9 || currentSquare[1] > 9) return [];
 			// check if the square is empty
-			if (_board[currentSquare[0]][currentSquare[1]] !== null) return [];
+			if (_board[currentSquare[0]][currentSquare[1]] !== markers.empty)
+				return [];
 			squares.push(currentSquare);
 		}
 		return squares;
@@ -117,7 +119,8 @@ function _Gameboard() {
 		].filter(([x, y]) => x >= 0 && x <= 9 && y >= 0 && y <= 9);
 		for (const [a, b] of squares) {
 			const square = _board[a][b];
-			if (square === null || square === ".") _board[a][b] = "*";
+			if (square === markers.empty || square === markers.adjacent)
+				_board[a][b] = markers.verified;
 		}
 		return squares;
 	};
@@ -128,27 +131,28 @@ function _Gameboard() {
 			const occupiedSq = _getCoveredSquares(coord, angle, len);
 			if (occupiedSq.length === 0) return false;
 			for (const [x, y] of occupiedSq) {
-				_board[x][y] = 1;
+				_board[x][y] = markers.ship;
 			}
 			const adjacentSq = _getAdjacentTiles(occupiedSq);
 			for (const [x, y] of adjacentSq) {
-				_board[x][y] = _board[x][y] !== null ? _board[x][y] : ".";
+				_board[x][y] =
+					_board[x][y] !== markers.empty ? _board[x][y] : markers.adjacent;
 			}
 			_ships.push(_Ship(occupiedSq, adjacentSq, len));
 		},
 		receiveAttack: function ([x, y]) {
 			x = Number.parseInt(x);
 			y = Number.parseInt(y);
-			if (_board[x][y] === null || _board[x][y] === ".") {
-				_board[x][y] = "O";
+			if (_board[x][y] === markers.empty || _board[x][y] === markers.adjacent) {
+				_board[x][y] = markers.miss;
 				return "miss";
 			}
-			if (_board[x][y] !== 1) return false;
+			if (_board[x][y] !== markers.ship) return false;
 
 			const attackedShip = _getAttackedShip([x, y]);
 			attackedShip.hit();
 
-			_board[x][y] = "X";
+			_board[x][y] = markers.hit;
 
 			if (!attackedShip.isSunk())
 				return {
@@ -157,7 +161,7 @@ function _Gameboard() {
 				};
 
 			for (const [x, y] of attackedShip.getAdjacentSquares()) {
-				if (_board[x][y] === ".") _board[x][y] = "*";
+				if (_board[x][y] === markers.adjacent) _board[x][y] = markers.verified;
 			}
 			return {
 				board: this.getBoard(),
@@ -198,7 +202,7 @@ function _Gameboard() {
 			_ships = [];
 			for (let i = 0; i < _board.length; i++) {
 				for (let j = 0; j < _board.length; j++) {
-					if (_board[i][j] !== null) _board[i][j] = null;
+					if (_board[i][j] !== markers.empty) _board[i][j] = markers.empty;
 				}
 			}
 		},
@@ -208,6 +212,7 @@ function _Gameboard() {
 }
 
 const _pipeComputer = pipeline(_gameboardAndComputerChoiceInterface);
+
 export default function Player(type, side) {
 	const playerType = type ? "computer" : "human";
 
@@ -221,7 +226,11 @@ export default function Player(type, side) {
 
 			const validSquares = board.reduce((acc, row, x) => {
 				for (let y = 0; y < row.length; y++) {
-					if (row[y] === null || row[y] === 1 || row[y] === ".")
+					if (
+						row[y] === markers.empty ||
+						row[y] === markers.ship ||
+						row[y] === markers.adjacent
+					)
 						acc.push([x, y]);
 				}
 				return acc;
