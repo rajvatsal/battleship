@@ -26,8 +26,7 @@ function _receivedAttack({ side, coords }) {
 	const [x, y] = coords;
 	const symbol = attackedPlayer.getBoard()[x][y];
 
-	if (attackedPlayer.hasLost())
-		return pubsub.emit("GameOver", attackedPlayer.side);
+	if (attackedPlayer.hasLost()) pubsub.emit("GameOver", attackedPlayer.side);
 	if (attackData === "miss") _switchTurn();
 	if (activePlayer.playerType === "computer")
 		setTimeout(_runComputer, computerDelay);

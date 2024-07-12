@@ -110,7 +110,7 @@ function _updateBoard({ symbol, side, attackData, coords }) {
 }
 
 function _gameOver(side) {
-	if (side === "player-one") alert("You won :)");
+	if (side === "right") alert("You won :)");
 	else alert("You Lost :_(");
 }
 
