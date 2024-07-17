@@ -38,13 +38,13 @@ let currentSquare;
 populateGrid(leftBoard);
 populateGrid(rightBoard);
 
-function _clickHandlerRandomBoard() {
+function clickHandlerRandomBoard() {
 	pubsub.emit("RandomBoardHumanPre");
 }
 
-function _clickHandlerResetGame() {
-	rightBoard.removeEventListener("mousedown", _clickHandlerAttack);
-	btnRandomize.addEventListener("click", _clickHandlerRandomBoard);
+function clickHandlerResetGame() {
+	rightBoard.removeEventListener("mousedown", clickHandlerAttack);
+	btnRandomize.addEventListener("click", clickHandlerRandomBoard);
 	leftBoard.classList.add("appear");
 	rightBoard.classList.remove("appear");
 	btnStartGame.setAttribute("data-game-state", "not-started");
@@ -52,17 +52,17 @@ function _clickHandlerResetGame() {
 	pubsub.emit("ResetGamePre");
 }
 
-function _clickHandlerStartGame() {
-	rightBoard.addEventListener("mousedown", _clickHandlerAttack);
-	btnResetGame.addEventListener("click", _clickHandlerResetGame, {
+function clickHandlerStartGame() {
+	rightBoard.addEventListener("mousedown", clickHandlerAttack);
+	btnResetGame.addEventListener("click", clickHandlerResetGame, {
 		once: true,
 	});
-	btnRandomize.removeEventListener("click", _clickHandlerRandomBoard);
+	btnRandomize.removeEventListener("click", clickHandlerRandomBoard);
 	this.setAttribute("data-game-state", "started");
 	pubsub.emit("StartGamePre");
 }
 
-function _clickHandlerAttack(e) {
+function clickHandlerAttack(e) {
 	const target = e.target;
 	if (target.tagName !== "BUTTON") return;
 	if (target.classList.contains("btn-start")) return;
@@ -75,8 +75,8 @@ function _clickHandlerAttack(e) {
 	pubsub.emit("ReceivedAttackPre", { coords, side });
 }
 
-function _resetGamePost([left]) {
-	_renderBoard({ board: left, side: "left" });
+function resetGamePost([left]) {
+	renderBoard({ board: left, side: "left" });
 	const buttons = rightBoard.querySelectorAll("button:not(.btn-start)");
 
 	// remove icons and styles
@@ -86,7 +86,7 @@ function _resetGamePost([left]) {
 	}
 }
 
-function _showActivePlayer(side) {
+function showActivePlayer(side) {
 	if (side === "left") {
 		leftBoard.classList.add("appear");
 		rightBoard.classList.remove("appear");
@@ -96,7 +96,7 @@ function _showActivePlayer(side) {
 	}
 }
 
-function _updateBoard({ symbol, side, attackData, coords }) {
+function updateBoard({ symbol, side, attackData, coords }) {
 	const [x, y] = coords;
 	const board = side === "left" ? leftBoard : rightBoard;
 	const square = board.querySelector(`[data-coordinates="${x}-${y}"]`);
@@ -105,16 +105,16 @@ function _updateBoard({ symbol, side, attackData, coords }) {
 
 	// if attacke was successful then show verfied squares
 	if (attackData === false) return;
-	if (attackData === "miss") return _showActivePlayer(getActiveBoard());
-	_renderVerifiedSquares(attackData, side);
+	if (attackData === "miss") return showActivePlayer(getActiveBoard());
+	renderVerifiedSquares(attackData, side);
 }
 
-function _gameOver(side) {
+function gameOver(side) {
 	if (side === "right") alert("You won :)");
 	else alert("You Lost :_(");
 }
 
-function _renderBoard({ board, side }) {
+function renderBoard({ board, side }) {
 	const buttons = document.querySelectorAll(
 		`.gameboards__${side}__board > button:not(.btn-start)`,
 	);
@@ -126,19 +126,19 @@ function _renderBoard({ board, side }) {
 	}
 }
 
-function _initializeGame({ board, side }) {
+function initializeGame({ board, side }) {
 	const attackedBoard = side === "left" ? leftBoard : rightBoard;
 	attackedBoard.classList.add("appear");
-	_renderBoard({ board, side });
+	renderBoard({ board, side });
 	// [[NOTE TO SELF]]
 	// When the user presses button a lot of times continuously then
 	// the page freezes. Fix it.
-	btnRandomize.addEventListener("click", _clickHandlerRandomBoard);
+	btnRandomize.addEventListener("click", clickHandlerRandomBoard);
 	btnStartGame.setAttribute("data-game-state", "not-started");
-	btnStartGame.addEventListener("mousedown", _clickHandlerStartGame);
+	btnStartGame.addEventListener("mousedown", clickHandlerStartGame);
 }
 
-function _renderVerifiedSquares({ board, squares }, side) {
+function renderVerifiedSquares({ board, squares }, side) {
 	for (const [x, y] of squares) {
 		const square = $(
 			`.gameboards__${side}__board > [data-coordinates="${x}-${y}"]`,
@@ -147,8 +147,8 @@ function _renderVerifiedSquares({ board, squares }, side) {
 	}
 }
 
-pubsub.on("ReceivedAttackPost", _updateBoard);
-pubsub.on("GameOver", _gameOver);
-pubsub.on("InitializePagePost", _initializeGame);
-pubsub.on("RandomBoardHumanPost", _renderBoard);
-pubsub.on("ResetGamePost", _resetGamePost);
+pubsub.on("ReceivedAttackPost", updateBoard);
+pubsub.on("GameOver", gameOver);
+pubsub.on("InitializePagePost", initializeGame);
+pubsub.on("RandomBoardHumanPost", renderBoard);
+pubsub.on("ResetGamePost", resetGamePost);

@@ -1,6 +1,6 @@
 import Player from "./Player.js";
 import pubsub from "./Pubsub.js";
-import { markers } from "./Player.js";
+import { markers } from "./Helpers.js";
 
 const playerOne = Player(0, "left");
 const playerTwo = Player(1, "right");
@@ -11,13 +11,13 @@ let attackedPlayer = playerOne;
 
 export const getActiveBoard = () => attackedPlayer.side;
 
-function _switchTurn() {
+function switchTurn() {
 	const z = activePlayer;
 	activePlayer = attackedPlayer;
 	attackedPlayer = z;
 }
 
-function _getComputerChoice(board) {
+function getComputerChoice(board) {
 	const validSquares = board.reduce((acc, row, x) => {
 		for (let y = 0; y < row.length; y++) {
 			if (
@@ -34,7 +34,7 @@ function _getComputerChoice(board) {
 	return validSquares[choice];
 }
 
-function _receivedAttack({ side, coords }) {
+function receivedAttack({ side, coords }) {
 	if (side !== attackedPlayer.side) return;
 
 	const attackData = attackedPlayer.receiveAttack(coords);
@@ -45,9 +45,9 @@ function _receivedAttack({ side, coords }) {
 	const symbol = attackedPlayer.getBoard()[x][y];
 
 	if (attackedPlayer.hasLost()) pubsub.emit("GameOver", attackedPlayer.side);
-	if (attackData === "miss") _switchTurn();
+	if (attackData === "miss") switchTurn();
 	if (activePlayer.playerType === "computer")
-		setTimeout(_runComputer, computerDelay);
+		setTimeout(runComputer, computerDelay);
 
 	pubsub.emit("ReceivedAttackPost", {
 		symbol,
@@ -57,13 +57,13 @@ function _receivedAttack({ side, coords }) {
 	});
 }
 
-function _runComputer() {
+function runComputer() {
 	const side = attackedPlayer.side;
-	const coords = _getComputerChoice(attackedPlayer.getBoard());
-	_receivedAttack({ side, coords });
+	const coords = getComputerChoice(attackedPlayer.getBoard());
+	receivedAttack({ side, coords });
 }
 
-function _resetGame() {
+function resetGame() {
 	for (const player of players) {
 		player.resetBoard();
 		player.createRandomLayout();
@@ -77,7 +77,7 @@ function _resetGame() {
 playerOne.createRandomLayout();
 playerTwo.createRandomLayout();
 
-pubsub.on("ReceivedAttackPre", _receivedAttack);
+pubsub.on("ReceivedAttackPre", receivedAttack);
 pubsub.on("InitializePagePre", () => {
 	pubsub.emit("InitializePagePost", {
 		board: playerOne.getBoard(),
@@ -87,7 +87,7 @@ pubsub.on("InitializePagePre", () => {
 
 pubsub.on("StartGamePre", () => {
 	if (activePlayer.playerType === "computer")
-		setTimeout(_runComputer, computerDelay);
+		setTimeout(runComputer, computerDelay);
 });
 
 pubsub.on("RandomBoardHumanPre", () => {
@@ -99,4 +99,4 @@ pubsub.on("RandomBoardHumanPre", () => {
 		side: human.side,
 	});
 });
-pubsub.on("ResetGamePre", _resetGame);
+pubsub.on("ResetGamePre", resetGame);

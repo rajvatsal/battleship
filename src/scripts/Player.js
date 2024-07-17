@@ -1,11 +1,11 @@
 import { pipeline, markers } from "./Helpers.js";
 
-const _gameboardAndComputerChoiceInterface = (state) => ({
+const gameboardAndComputerChoiceInterface = (state) => ({
 	interface: "gameboard and computer choice",
 	getChoice: (board) => state.getChoice(board),
 });
 
-const _shipInterface = (state) => ({
+const shipInterface = (state) => ({
 	interface: "Ship Interface",
 	isSunk: () => state.isSunk(),
 	hit: () => state.hit(),
@@ -13,7 +13,7 @@ const _shipInterface = (state) => ({
 	getAdjacentSquares: () => state.getAdjacentSquares(),
 });
 
-const _gameboardInterface = (state) => ({
+const gameboardInterface = (state) => ({
 	interface: "Gameboard Interface",
 	getBoard: () => state.getBoard(),
 	placeShip: (coord, angle, len) => state.placeShip(coord, angle, len),
@@ -23,12 +23,12 @@ const _gameboardInterface = (state) => ({
 	resetBoard: () => state.resetBoard(),
 });
 
-function _getRandom(max, limit) {
+function getRandom(max, limit) {
 	const range = limit ? 1 : 0;
 	return Math.floor(Math.random() * max + range);
 }
 
-function _Ship(coveredSq, adjacentSq, len = 1) {
+function Ship(coveredSq, adjacentSq, len = 1) {
 	const _MAX_LENGTH = 5;
 	const _MIN_LENGTH = 1;
 	const _length =
@@ -44,14 +44,14 @@ function _Ship(coveredSq, adjacentSq, len = 1) {
 		getAdjacentSquares: () => _adjacentSquares,
 	};
 
-	return Object.assign(_shipInterface(state));
+	return Object.assign(shipInterface(state));
 }
 
-function _isArrayEqual([x, y], [a, b]) {
+function isArrayEqual([x, y], [a, b]) {
 	return x === a && y === b;
 }
 
-function _Gameboard() {
+function Gameboard() {
 	let _ships = [];
 	const _board = [];
 	for (let i = 0; i < 10; i++) {
@@ -76,8 +76,8 @@ function _Gameboard() {
 		for (const [x, y] of coveredTiles) {
 			for (let i = x - 1; i <= x + 1; i++) {
 				for (let j = y - 1; j <= y + 1; j++) {
-					if (coveredTiles.some((sq) => _isArrayEqual([i, j], sq))) continue;
-					if (adjacent.some((sq) => _isArrayEqual([i, j], sq))) continue;
+					if (coveredTiles.some((sq) => isArrayEqual([i, j], sq))) continue;
+					if (adjacent.some((sq) => isArrayEqual([i, j], sq))) continue;
 					if (i > 9 || i < 0 || j > 9 || j < 0) continue;
 					adjacent.push([i, j]);
 				}
@@ -129,7 +129,7 @@ function _Gameboard() {
 				_board[x][y] =
 					_board[x][y] !== markers.empty ? _board[x][y] : markers.adjacent;
 			}
-			_ships.push(_Ship(occupiedSq, adjacentSq, len));
+			_ships.push(Ship(occupiedSq, adjacentSq, len));
 		},
 		receiveAttack: function ([x, y]) {
 			x = Number.parseInt(x);
@@ -182,9 +182,9 @@ function _Gameboard() {
 			// instead of maginc values like 10
 			for (let i = 0; i < 10; i++) {
 				do {
-					length = _getRandom(5, 1);
-					coordinates = [_getRandom(9, 0), _getRandom(9, 0)];
-					angle = _getRandom(2, 0) === 1 ? 180 : 90;
+					length = getRandom(5, 1);
+					coordinates = [getRandom(9, 0), getRandom(9, 0)];
+					angle = getRandom(2, 0) === 1 ? 180 : 90;
 				} while (this.placeShip(coordinates, angle, length) === false);
 			}
 		},
@@ -199,16 +199,16 @@ function _Gameboard() {
 		},
 	};
 
-	return Object.assign(_gameboardInterface(state));
+	return Object.assign(gameboardInterface(state));
 }
 
-const _pipeComputer = pipeline(_gameboardAndComputerChoiceInterface);
+const pipeComputer = pipeline(gameboardAndComputerChoiceInterface);
 
 export default function Player(type, side) {
 	const playerType = type ? "computer" : "human";
 
 	const state = {};
 
-	const composite = playerType === "computer" ? _pipeComputer(state) : {};
-	return Object.assign({}, _Gameboard(), composite, { playerType, side });
+	const composite = playerType === "computer" ? pipeComputer(state) : {};
+	return Object.assign({}, Gameboard(), composite, { playerType, side });
 }
