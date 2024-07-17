@@ -1,5 +1,6 @@
 import Player from "./Player.js";
 import pubsub from "./Pubsub.js";
+import { markers } from "./Player.js";
 
 const playerOne = Player(0, "left");
 const playerTwo = Player(1, "right");
@@ -14,6 +15,23 @@ function _switchTurn() {
 	const z = activePlayer;
 	activePlayer = attackedPlayer;
 	attackedPlayer = z;
+}
+
+function _getComputerChoice(board) {
+	const validSquares = board.reduce((acc, row, x) => {
+		for (let y = 0; y < row.length; y++) {
+			if (
+				row[y] === markers.empty ||
+				row[y] === markers.ship ||
+				row[y] === markers.adjacent
+			)
+				acc.push([x, y]);
+		}
+		return acc;
+	}, []);
+
+	const choice = Math.floor(Math.random() * validSquares.length);
+	return validSquares[choice];
 }
 
 function _receivedAttack({ side, coords }) {
@@ -41,7 +59,7 @@ function _receivedAttack({ side, coords }) {
 
 function _runComputer() {
 	const side = attackedPlayer.side;
-	const coords = activePlayer.getChoice(attackedPlayer.getBoard());
+	const coords = _getComputerChoice(attackedPlayer.getBoard());
 	_receivedAttack({ side, coords });
 }
 

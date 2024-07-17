@@ -1,13 +1,4 @@
-import { pipeline } from "./Helpers.js";
-
-export const markers = {
-	adjacent: ".",
-	hit: "X",
-	miss: "O",
-	ship: 1,
-	verified: "*",
-	empty: null,
-};
+import { pipeline, markers } from "./Helpers.js";
 
 const _gameboardAndComputerChoiceInterface = (state) => ({
 	interface: "gameboard and computer choice",
@@ -216,30 +207,7 @@ const _pipeComputer = pipeline(_gameboardAndComputerChoiceInterface);
 export default function Player(type, side) {
 	const playerType = type ? "computer" : "human";
 
-	const state = {
-		getChoice: (board) => {
-			try {
-				if (board === undefined) throw new Error("No board provided");
-			} catch (err) {
-				return console.error(err);
-			}
-
-			const validSquares = board.reduce((acc, row, x) => {
-				for (let y = 0; y < row.length; y++) {
-					if (
-						row[y] === markers.empty ||
-						row[y] === markers.ship ||
-						row[y] === markers.adjacent
-					)
-						acc.push([x, y]);
-				}
-				return acc;
-			}, []);
-
-			const choice = Math.floor(Math.random() * validSquares.length);
-			return validSquares[choice];
-		},
-	};
+	const state = {};
 
 	const composite = playerType === "computer" ? _pipeComputer(state) : {};
 	return Object.assign({}, _Gameboard(), composite, { playerType, side });
