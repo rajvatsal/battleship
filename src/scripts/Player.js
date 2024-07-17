@@ -1,10 +1,5 @@
 import { pipeline, markers } from "./Helpers.js";
 
-const gameboardAndComputerChoiceInterface = (state) => ({
-	interface: "gameboard and computer choice",
-	getChoice: (board) => state.getChoice(board),
-});
-
 const shipInterface = (state) => ({
 	interface: "Ship Interface",
 	isSunk: () => state.isSunk(),
@@ -202,13 +197,9 @@ function Gameboard() {
 	return Object.assign(gameboardInterface(state));
 }
 
-const pipeComputer = pipeline(gameboardAndComputerChoiceInterface);
-
-export default function Player(type, side) {
+function Player({ type, side }) {
 	const playerType = type ? "computer" : "human";
-
-	const state = {};
-
-	const composite = playerType === "computer" ? pipeComputer(state) : {};
-	return Object.assign({}, Gameboard(), composite, { playerType, side });
+	return Object.assign({}, { playerType, side });
 }
+
+export default pipeline(Gameboard, Player);
