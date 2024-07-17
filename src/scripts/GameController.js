@@ -2,8 +2,8 @@ import Player from "./Player.js";
 import pubsub from "./Pubsub.js";
 import { markers } from "./Helpers.js";
 
-const playerOne = Player(0, "left");
-const playerTwo = Player(1, "right");
+const playerOne = Player({ type: 0, side: "left" });
+const playerTwo = Player({ type: 1, side: "right" });
 const players = [playerOne, playerTwo];
 const computerDelay = 1200;
 let activePlayer = playerTwo;
@@ -17,7 +17,7 @@ function switchTurn() {
 	attackedPlayer = z;
 }
 
-function getComputerChoice(board) {
+function getRandomSquare(board) {
 	const validSquares = board.reduce((acc, row, x) => {
 		for (let y = 0; y < row.length; y++) {
 			if (
@@ -32,6 +32,10 @@ function getComputerChoice(board) {
 
 	const choice = Math.floor(Math.random() * validSquares.length);
 	return validSquares[choice];
+}
+
+function getComputerChoice(board) {
+	return getRandomSquare(board);
 }
 
 function receivedAttack({ side, coords }) {
