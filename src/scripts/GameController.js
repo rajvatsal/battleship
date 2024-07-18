@@ -38,7 +38,7 @@ function getComputerChoice(board) {
 	return getRandomSquare(board);
 }
 
-function receivedAttack({ side, coords }) {
+function playRound({ side, coords }) {
 	if (side !== attackedPlayer.side) return;
 
 	const attackData = attackedPlayer.receiveAttack(coords);
@@ -64,7 +64,7 @@ function receivedAttack({ side, coords }) {
 function runComputer() {
 	const side = attackedPlayer.side;
 	const coords = getComputerChoice(attackedPlayer.getBoard());
-	receivedAttack({ side, coords });
+	playRound({ side, coords });
 }
 
 function resetGame() {
@@ -81,7 +81,7 @@ function resetGame() {
 playerOne.createRandomLayout();
 playerTwo.createRandomLayout();
 
-pubsub.on("ReceivedAttackPre", receivedAttack);
+pubsub.on("ReceivedAttackPre", playRound);
 pubsub.on("InitializePagePre", () => {
 	pubsub.emit("InitializePagePost", {
 		board: playerOne.getBoard(),
