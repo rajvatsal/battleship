@@ -1,7 +1,16 @@
-import { pipeline, markers, getRandom } from "./Helpers.js";
 import getRandomSquare from "./RandomTile.js";
 import Queue from "./Queue.js";
+import {
+	pipeline,
+	markers,
+	getRandom,
+	directions,
+	validSquare,
+	getOppositeDirection,
+	isArrayEqual,
+} from "./Helpers.js";
 
+// Interfaces
 const shipInterface = (state) => ({
 	interface: "Ship Interface",
 	isSunk: () => state.isSunk(),
@@ -21,7 +30,7 @@ const gameboardInterface = (state) => ({
 });
 
 const aiInterface = (state) => ({
-	interface: "AI interface",
+	interface: "AI Interface",
 	attack: (i) => state.attack(i),
 	resetStatus: () => state.resetStatus(),
 	setAnchor: (i) => state.setAnchor(i),
@@ -30,6 +39,7 @@ const aiInterface = (state) => ({
 	isAnchorNull: () => state.isAnchorNull(),
 });
 
+// Classes
 function Ship(coveredSq, adjacentSq, len = 1) {
 	const _MAX_LENGTH = 5;
 	const _MIN_LENGTH = 1;
@@ -47,10 +57,6 @@ function Ship(coveredSq, adjacentSq, len = 1) {
 	};
 
 	return Object.assign(shipInterface(state));
-}
-
-function isArrayEqual([x, y], [a, b]) {
-	return x === a && y === b;
 }
 
 function Gameboard() {
@@ -244,11 +250,11 @@ function computerAi() {
 			if (!_Q.isEmpty()) _Q.empty();
 			const [x, y] = directions[previous.method](prevCoord);
 			if (validSquare(board, x, y)) return [x, y];
-			previous.method = getOpposite(previous.method);
+			previous.method = getOppositeDirection(previous.method);
 			return directions[previous.method](anchor);
 		}
 		if (previous.status === "miss") {
-			previous.method = getOpposite(previous.method);
+			previous.method = getOppositeDirection(previous.method);
 			return directions[previous.method](anchor);
 		}
 	};
@@ -276,37 +282,11 @@ function computerAi() {
 	return aiInterface(state);
 }
 
-function validSquare(board, x, y) {
-	if (x > 9 || y > 9) return false;
-	if (x < 0 || y < 0) return false;
-	const mark = board[x][y];
-	if (
-		mark === markers.empty ||
-		mark === markers.ship ||
-		mark === markers.adjacent
-	)
-		return true;
-	return false;
-}
-
-const directions = {
-	left: ([x, y]) => [x - 1, y],
-	right: ([x, y]) => [x + 1, y],
-	up: ([x, y]) => [x, y - 1],
-	down: ([x, y]) => [x, y + 1],
-};
-
-function getOpposite(str) {
-	if (str === "left") return "right";
-	if (str === "right") return "left";
-	if (str === "up") return "down";
-	if (str === "down") return "up";
-}
-
 function Player({ type, side }) {
 	const playerType = type ? "computer" : "human";
 	if (playerType === "human") return Object.assign({}, { playerType, side });
 	return Object.assign({}, { ai: computerAi() }, { playerType, side });
 }
 
+// Player with a gameboard
 export default pipeline(Gameboard, Player);
