@@ -96,7 +96,7 @@ function showActivePlayer(side) {
 	}
 }
 
-function updateBoard({ symbol, side, attackData, coords }) {
+function updateBoard({ symbol, side, attackOutcome, coords }) {
 	const [x, y] = coords;
 	const board = side === "left" ? leftBoard : rightBoard;
 	const square = board.querySelector(`[data-coordinates="${x}-${y}"]`);
@@ -104,9 +104,10 @@ function updateBoard({ symbol, side, attackData, coords }) {
 	classes[symbol](square);
 
 	// if attacke was successful then show verfied squares
-	if (attackData === false) return;
-	if (attackData === "miss") return showActivePlayer(getActiveBoard());
-	renderVerifiedSquares(attackData, side);
+	if (attackOutcome.status === "Invalid") return;
+	if (attackOutcome.status === "miss")
+		return showActivePlayer(getActiveBoard());
+	renderVerifiedSquares(attackOutcome, side);
 }
 
 function gameOver(side) {

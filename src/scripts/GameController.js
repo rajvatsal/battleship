@@ -17,53 +17,43 @@ function switchTurn() {
 	attackedPlayer = z;
 }
 
-function getRandomSquare(board) {
-	const validSquares = board.reduce((acc, row, x) => {
-		for (let y = 0; y < row.length; y++) {
-			if (
-				row[y] === markers.empty ||
-				row[y] === markers.ship ||
-				row[y] === markers.adjacent
-			)
-				acc.push([x, y]);
-		}
-		return acc;
-	}, []);
-
-	const choice = Math.floor(Math.random() * validSquares.length);
-	return validSquares[choice];
-}
-
-function getComputerChoice(board) {
-	return getRandomSquare(board);
-}
-
 function playRound({ side, coords }) {
 	if (side !== attackedPlayer.side) return;
 
-	const attackData = attackedPlayer.receiveAttack(coords);
+	const attackOutcome = attackedPlayer.receiveAttack(coords);
+	if (activePlayer.playerType === "computer")
+		updateComputerStatus(attackOutcome, coords);
 
-	if (attackData === false) return;
+	if (attackOutcome.status === "Invalid") return;
 
 	const [x, y] = coords;
 	const symbol = attackedPlayer.getBoard()[x][y];
 
-	if (attackedPlayer.hasLost()) pubsub.emit("GameOver", attackedPlayer.side);
-	if (attackData === "miss") switchTurn();
+	if (attackedPlayer.hasLost())
+		return pubsub.emit("GameOver", attackedPlayer.side);
+	if (attackOutcome.status === "miss") switchTurn();
 	if (activePlayer.playerType === "computer")
 		setTimeout(runComputer, computerDelay);
 
 	pubsub.emit("ReceivedAttackPost", {
 		symbol,
 		side,
-		attackData,
+		attackOutcome,
 		coords,
 	});
 }
 
+function updateComputerStatus(outcome, coords) {
+	const ai = activePlayer.ai;
+	ai.setPrevStatus(outcome.status);
+	if (outcome.status === "hit" && ai.isAnchorNull()) ai.setAnchor(coords);
+	if (outcome.status === "sunk") ai.resetStatus();
+}
+
 function runComputer() {
 	const side = attackedPlayer.side;
-	const coords = getComputerChoice(attackedPlayer.getBoard());
+	const coords = activePlayer.ai.attack(attackedPlayer.getBoard());
+	activePlayer.ai.setPrevCoords(coords);
 	playRound({ side, coords });
 }
 

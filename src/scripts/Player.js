@@ -1,4 +1,5 @@
-import { pipeline, markers } from "./Helpers.js";
+import { pipeline, markers, getRandom } from "./Helpers.js";
+import Queue from "./Queue.js";
 
 const shipInterface = (state) => ({
 	interface: "Ship Interface",
@@ -18,10 +19,23 @@ const gameboardInterface = (state) => ({
 	resetBoard: () => state.resetBoard(),
 });
 
-function getRandom(max, limit) {
-	const range = limit ? 1 : 0;
-	return Math.floor(Math.random() * max + range);
-}
+const aiInterface = (state) => ({
+	interface: "AI interface",
+	attack: (i) => state.attack(i),
+});
+
+const aiStatusInterface = (state) => ({
+	resetStatus: () => state.resetStatus(),
+	setAnchor: (i) => state.setAnchor(i),
+	setPrevCoords: (i) => state.setPrevCoords(i),
+	setPrevStatus: (i) => state.setPrevStatus(i),
+	isAnchorNull: () => state.isAnchorNull(),
+});
+
+const aiAndStatusInterface = (state) =>
+	Object.assign(aiInterface(state), aiStatusInterface(state), {
+		interface: "AI  And Status Interface",
+	});
 
 function Ship(coveredSq, adjacentSq, len = 1) {
 	const _MAX_LENGTH = 5;
@@ -131,9 +145,9 @@ function Gameboard() {
 			y = Number.parseInt(y);
 			if (_board[x][y] === markers.empty || _board[x][y] === markers.adjacent) {
 				_board[x][y] = markers.miss;
-				return "miss";
+				return { status: "miss" };
 			}
-			if (_board[x][y] !== markers.ship) return false;
+			if (_board[x][y] !== markers.ship) return { status: "Invalid" };
 
 			const attackedShip = _getAttackedShip([x, y]);
 			attackedShip.hit();
@@ -142,6 +156,7 @@ function Gameboard() {
 
 			if (!attackedShip.isSunk())
 				return {
+					status: "hit",
 					board: this.getBoard(),
 					squares: _getCornerSquares(x, y),
 				};
@@ -150,6 +165,7 @@ function Gameboard() {
 				if (_board[x][y] === markers.adjacent) _board[x][y] = markers.verified;
 			}
 			return {
+				status: "sunk",
 				board: this.getBoard(),
 				squares: [
 					...attackedShip.getOccupiedSquares(),
@@ -197,9 +213,121 @@ function Gameboard() {
 	return Object.assign(gameboardInterface(state));
 }
 
+function computerAi() {
+	const Q = Queue();
+
+	const shipStatus = {
+		anchor: null,
+		previous: {
+			status: null,
+			method: null,
+			coord: null,
+		},
+	};
+
+	function _getRandomSquare(board) {
+		const validSquares = board.reduce((acc, row, x) => {
+			for (let y = 0; y < row.length; y++) {
+				if (
+					row[y] !== markers.hit &&
+					row[y] !== markers.miss &&
+					row[y] !== markers.verified
+				)
+					acc.push([x, y]);
+			}
+			return acc;
+		}, []);
+
+		const choice = Math.floor(Math.random() * validSquares.length);
+		return validSquares[choice];
+	}
+
+	const attack = (board) => {
+		const anchor = shipStatus.anchor;
+		const prevCoord = shipStatus.previous.coord;
+		const previous = shipStatus.previous;
+		if (anchor === null) return _getRandomSquare(board);
+		if (previous.status === "miss" && !Q.isEmpty()) {
+			const len = Q.getLength();
+			for (let i = 0; i < len; i++) {
+				previous.method = Q.dequeue();
+				const [x, y] = directions[previous.method](anchor);
+				if (validSquare(board, x, y)) return [x, y];
+			}
+		}
+		if (isArrayEqual(anchor, prevCoord)) {
+			for (const fn in directions) Q.enqueue(fn);
+			const len = Q.getLength();
+			for (let i = 0; i < len; i++) {
+				previous.method = Q.dequeue();
+				const [x, y] = directions[previous.method](anchor);
+				if (validSquare(board, x, y)) return [x, y];
+			}
+		}
+		if (previous.status === "hit") {
+			if (!Q.isEmpty()) Q.empty();
+			return directions[previous.method](prevCoord);
+		}
+		if (previous.status === "miss") {
+			previous.method = getOpposite(previous.method);
+			return directions[previous.method](anchor);
+		}
+	};
+
+	const resetStatus = () => {
+		const previous = shipStatus.previous;
+		shipStatus.anchor = null;
+		for (const i in previous) previous[i] = null;
+	};
+
+	const setAnchor = (anchor) => (shipStatus.anchor = anchor);
+	const setPrevCoords = (coords) => (shipStatus.previous.coord = coords);
+	const setPrevStatus = (status) => (shipStatus.previous.status = status);
+	const isAnchorNull = () => shipStatus.anchor === null;
+
+	const state = {
+		attack,
+		resetStatus,
+		setAnchor,
+		setPrevCoords,
+		setPrevStatus,
+		isAnchorNull,
+	};
+
+	return aiAndStatusInterface(state);
+}
+
+function validSquare(board, x, y) {
+	if (x > 9 || y > 9) return false;
+	if (x < 0 || y < 0) return false;
+	const mark = board[x][y];
+	if (
+		mark === markers.empty ||
+		mark === markers.ship ||
+		mark === markers.adjacent
+	)
+		return true;
+	return false;
+}
+
+const directions = {
+	left: ([x, y]) => [x - 1, y],
+	right: ([x, y]) => [x + 1, y],
+	up: ([x, y]) => [x, y - 1],
+	down: ([x, y]) => [x, y + 1],
+};
+
+function getOpposite(str) {
+	if (str === "left") return "right";
+	if (str === "right") return "left";
+	if (str === "up") return "down";
+	if (str === "down") return "up";
+}
+
 function Player({ type, side }) {
 	const playerType = type ? "computer" : "human";
-	return Object.assign({}, { playerType, side });
+	if (playerType === "human") return Object.assign({}, { playerType, side });
+	return Object.assign({}, { ai: computerAi() }, { playerType, side });
 }
 
 export default pipeline(Gameboard, Player);
