@@ -1,6 +1,5 @@
 import Player from "./Player.js";
 import pubsub from "./Pubsub.js";
-import { markers } from "./Helpers.js";
 
 const playerOne = Player({ type: 0, side: "left" });
 const playerTwo = Player({ type: 1, side: "right" });
