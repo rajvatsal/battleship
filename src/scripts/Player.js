@@ -1,4 +1,5 @@
 import { pipeline, markers, getRandom } from "./Helpers.js";
+import getRandomSquare from "./RandomTile.js";
 import Queue from "./Queue.js";
 
 const shipInterface = (state) => ({
@@ -206,9 +207,9 @@ function Gameboard() {
 }
 
 function computerAi() {
-	const Q = Queue();
+	const _Q = Queue();
 
-	const shipStatus = {
+	const _status = {
 		anchor: null,
 		previous: {
 			status: null,
@@ -217,48 +218,34 @@ function computerAi() {
 		},
 	};
 
-	function _getRandomSquare(board) {
-		const validSquares = board.reduce((acc, row, x) => {
-			for (let y = 0; y < row.length; y++) {
-				if (
-					row[y] !== markers.hit &&
-					row[y] !== markers.miss &&
-					row[y] !== markers.verified
-				)
-					acc.push([x, y]);
-			}
-			return acc;
-		}, []);
-
-		const choice = Math.floor(Math.random() * validSquares.length);
-		return validSquares[choice];
-	}
-
 	const attack = (board) => {
-		const anchor = shipStatus.anchor;
-		const prevCoord = shipStatus.previous.coord;
-		const previous = shipStatus.previous;
-		if (anchor === null) return _getRandomSquare(board);
-		if (previous.status === "miss" && !Q.isEmpty()) {
-			const len = Q.getLength();
+		const anchor = _status.anchor;
+		const prevCoord = _status.previous.coord;
+		const previous = _status.previous;
+		if (anchor === null) return getRandomSquare(board);
+		if (previous.status === "miss" && !_Q.isEmpty()) {
+			const len = _Q.getLength();
 			for (let i = 0; i < len; i++) {
-				previous.method = Q.dequeue();
+				previous.method = _Q.dequeue();
 				const [x, y] = directions[previous.method](anchor);
 				if (validSquare(board, x, y)) return [x, y];
 			}
 		}
 		if (isArrayEqual(anchor, prevCoord)) {
-			for (const fn in directions) Q.enqueue(fn);
-			const len = Q.getLength();
+			for (const fn in directions) _Q.enqueue(fn);
+			const len = _Q.getLength();
 			for (let i = 0; i < len; i++) {
-				previous.method = Q.dequeue();
+				previous.method = _Q.dequeue();
 				const [x, y] = directions[previous.method](anchor);
 				if (validSquare(board, x, y)) return [x, y];
 			}
 		}
 		if (previous.status === "hit") {
-			if (!Q.isEmpty()) Q.empty();
-			return directions[previous.method](prevCoord);
+			if (!_Q.isEmpty()) _Q.empty();
+			const [x, y] = directions[previous.method](prevCoord);
+			if (validSquare(board, x, y)) return [x, y];
+			previous.method = getOpposite(previous.method);
+			return directions[previous.method](anchor);
 		}
 		if (previous.status === "miss") {
 			previous.method = getOpposite(previous.method);
@@ -267,15 +254,15 @@ function computerAi() {
 	};
 
 	const resetStatus = () => {
-		const previous = shipStatus.previous;
-		shipStatus.anchor = null;
+		const previous = _status.previous;
+		_status.anchor = null;
 		for (const i in previous) previous[i] = null;
 	};
 
-	const setAnchor = (anchor) => (shipStatus.anchor = anchor);
-	const setPrevCoords = (coords) => (shipStatus.previous.coord = coords);
-	const setPrevStatus = (status) => (shipStatus.previous.status = status);
-	const isAnchorNull = () => shipStatus.anchor === null;
+	const setAnchor = (anchor) => (_status.anchor = anchor);
+	const setPrevCoords = (coords) => (_status.previous.coord = coords);
+	const setPrevStatus = (status) => (_status.previous.status = status);
+	const isAnchorNull = () => _status.anchor === null;
 
 	const state = {
 		attack,
