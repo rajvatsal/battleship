@@ -22,20 +22,12 @@ const gameboardInterface = (state) => ({
 const aiInterface = (state) => ({
 	interface: "AI interface",
 	attack: (i) => state.attack(i),
-});
-
-const aiStatusInterface = (state) => ({
 	resetStatus: () => state.resetStatus(),
 	setAnchor: (i) => state.setAnchor(i),
 	setPrevCoords: (i) => state.setPrevCoords(i),
 	setPrevStatus: (i) => state.setPrevStatus(i),
 	isAnchorNull: () => state.isAnchorNull(),
 });
-
-const aiAndStatusInterface = (state) =>
-	Object.assign(aiInterface(state), aiStatusInterface(state), {
-		interface: "AI  And Status Interface",
-	});
 
 function Ship(coveredSq, adjacentSq, len = 1) {
 	const _MAX_LENGTH = 5;
@@ -294,7 +286,7 @@ function computerAi() {
 		isAnchorNull,
 	};
 
-	return aiAndStatusInterface(state);
+	return aiInterface(state);
 }
 
 function validSquare(board, x, y) {
