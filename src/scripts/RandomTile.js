@@ -1,15 +1,10 @@
-import { markers } from "./Helpers.js";
+import { markers, validSquare } from "./Helpers.js";
 
 export default function getRandomSquare(board) {
 	const validSquares = board.reduce((acc, row, x) => {
-		for (let y = 0; y < row.length; y++) {
-			if (
-				row[y] !== markers.hit &&
-				row[y] !== markers.miss &&
-				row[y] !== markers.verified
-			)
-				acc.push([x, y]);
-		}
+		for (let y = 0; y < row.length; y++)
+			if (validSquare(board, x, y)) acc.push([x, y]);
+
 		return acc;
 	}, []);
 
