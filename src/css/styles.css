@@ -161,11 +161,11 @@ button[data-game-state="not-started"] {
   background-color: #282828;
   color: #fffffff0;
   transition: box-shadow 200ms ease;
-  box-shadow: 3px 3px green;
+  box-shadow: 3px 3px #86b6e0;
 }
 
 button[data-game-state="not-started"]:hover {
-  box-shadow: 6px 6px green;
+  box-shadow: 6px 6px #86b6e0;
 }
 
 button[data-game-state="started"] {
