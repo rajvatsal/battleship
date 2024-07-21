@@ -1,3 +1,5 @@
+@import url("./utility.css");
+
 /* [[NOTE]] Remove inside borders from visible ships */
 :root {
   --tile-length: 30px;
@@ -7,6 +9,11 @@
   --side-gap: 200px;
   --dot-scale: 0.65;
   --bg-miss: #f3f7fe;
+}
+
+body {
+  font-family: var(--ff-primary);
+  color: var(--clr-text);
 }
 
 #gameboards {
@@ -70,10 +77,10 @@ header {
   position: absolute;
   background-color: #ffffffa8;
   backdrop-filter: blur(0.7px);
-  top: -2px;
-  left: -2px;
-  height: calc(100% + 4px);
-  width: calc(100% + 4px);
+  top: -20px;
+  left: -20px;
+  height: calc(100% + 4px + 20px);
+  width: calc(100% + 4px + 20px);
   z-index: 1000;
   display: flex;
   align-items: center;
@@ -148,11 +155,17 @@ button[data-game-state="not-started"] {
   top: 40%;
   left: 20px;
   z-index: 1001;
-  padding: 5px 20px;
+  padding: 5px 20px 10px;
   font-size: inherit;
-  font-family: inherit;
-  background-color: black;
-  color: white;
+  font-family: var(--ff-heading);
+  background-color: #282828;
+  color: #fffffff0;
+  transition: box-shadow 200ms ease;
+  box-shadow: 3px 3px green;
+}
+
+button[data-game-state="not-started"]:hover {
+  box-shadow: 6px 6px green;
 }
 
 button[data-game-state="started"] {
@@ -202,6 +215,9 @@ button[data-game-state="started"] {
 }
 
 .game-logo > h1 {
-  align-self: flex-end;
+  align-self: center;
   margin: 0 0;
+  font-size: 1.5rem;
+  font-family: var(--ff-heading);
+  font-weight: normal;
 }
