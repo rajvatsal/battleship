@@ -227,3 +227,7 @@ button[data-game-state="started"] {
   font-family: var(--ff-heading);
   font-weight: normal;
 }
+
+.options__buttons {
+  margin-left: 100px;
+}
