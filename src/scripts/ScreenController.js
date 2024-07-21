@@ -54,6 +54,7 @@ function clickHandlerResetGame() {
 
 function clickHandlerStartGame() {
 	rightBoard.addEventListener("mousedown", clickHandlerAttack);
+	rightBoard.classList.add("human");
 	btnResetGame.addEventListener("mousedown", clickHandlerResetGame, {
 		once: true,
 	});
