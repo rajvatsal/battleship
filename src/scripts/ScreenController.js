@@ -44,7 +44,7 @@ function clickHandlerRandomBoard() {
 
 function clickHandlerResetGame() {
 	rightBoard.removeEventListener("mousedown", clickHandlerAttack);
-	btnRandomize.addEventListener("click", clickHandlerRandomBoard);
+	btnRandomize.addEventListener("mousedown", clickHandlerRandomBoard);
 	leftBoard.classList.add("appear");
 	rightBoard.classList.remove("appear");
 	btnStartGame.setAttribute("data-game-state", "not-started");
@@ -54,10 +54,10 @@ function clickHandlerResetGame() {
 
 function clickHandlerStartGame() {
 	rightBoard.addEventListener("mousedown", clickHandlerAttack);
-	btnResetGame.addEventListener("click", clickHandlerResetGame, {
+	btnResetGame.addEventListener("mousedown", clickHandlerResetGame, {
 		once: true,
 	});
-	btnRandomize.removeEventListener("click", clickHandlerRandomBoard);
+	btnRandomize.removeEventListener("mousedown", clickHandlerRandomBoard);
 	this.setAttribute("data-game-state", "started");
 	pubsub.emit("StartGamePre");
 }
@@ -131,10 +131,7 @@ function initializeGame({ board, side }) {
 	const attackedBoard = side === "left" ? leftBoard : rightBoard;
 	attackedBoard.classList.add("appear");
 	renderBoard({ board, side });
-	// [[NOTE TO SELF]]
-	// When the user presses button a lot of times continuously then
-	// the page freezes. Fix it.
-	btnRandomize.addEventListener("click", clickHandlerRandomBoard);
+	btnRandomize.addEventListener("mousedown", clickHandlerRandomBoard);
 	btnStartGame.setAttribute("data-game-state", "not-started");
 	btnStartGame.addEventListener("mousedown", clickHandlerStartGame);
 }
