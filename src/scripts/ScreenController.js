@@ -2,6 +2,7 @@ import populateGrid from "./DisplayGameboard.js";
 import pubsub from "./Pubsub.js";
 import icons from "./Icons.js";
 import getIndexes from "./components/BoardIndex.js";
+import getLogo from "./components/Logo.js";
 import { getActiveBoard } from "./GameController.js";
 
 const classes = {
@@ -25,9 +26,13 @@ const classes = {
 const $ = document.querySelector.bind(document);
 const leftBoard = $(".gameboards__left__board");
 const rightBoard = $(".gameboards__right__board");
+const header = $("header");
 const btnRandomize = $(".options__buttons__randomize");
 const btnStartGame = $("button.btn-start");
 const btnResetGame = $(".options__buttons__reset");
+
+// Add logo
+header.prepend(getLogo());
 
 // Add Indexes
 const { columns: c1, rows: r1 } = getIndexes();
