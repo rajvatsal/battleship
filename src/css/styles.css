@@ -94,6 +94,12 @@ button,
   cursor: pointer;
 }
 
+.toggle-player-type > *,
+.toggle-player-type {
+  opacity: 0;
+  cursor: default;
+}
+
 button.hit {
   background-color: #ffbdbd;
 }
