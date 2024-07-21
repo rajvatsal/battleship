@@ -1,6 +1,7 @@
 import populateGrid from "./DisplayGameboard.js";
 import pubsub from "./Pubsub.js";
 import icons from "./Icons.js";
+import getIndexes from "./components/BoardIndex.js";
 import { getActiveBoard } from "./GameController.js";
 
 const classes = {
@@ -27,6 +28,13 @@ const rightBoard = $(".gameboards__right__board");
 const btnRandomize = $(".options__buttons__randomize");
 const btnStartGame = $("button.btn-start");
 const btnResetGame = $(".options__buttons__reset");
+
+// Add Indexes
+const { columns: c1, rows: r1 } = getIndexes();
+const { columns: c2, rows: r2 } = getIndexes();
+
+leftBoard.append(c1, r1);
+rightBoard.append(c2, r2);
 
 // I have to do it this way because only the callback function
 // from event handler has access to e.target. So the e.target is

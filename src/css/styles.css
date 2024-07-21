@@ -168,3 +168,20 @@ button[data-game-state="started"] {
   transform: translate(-2px, -2px);
   z-index: 1000;
 }
+
+.board__columns {
+  position: absolute;
+  top: -20px;
+  display: grid;
+  grid-template: 20px / repeat(10, 1fr);
+  width: 100%;
+  justify-items: center;
+}
+
+.board__rows {
+  position: absolute;
+  left: -20px;
+  display: grid;
+  height: 100%;
+  place-items: center;
+}
