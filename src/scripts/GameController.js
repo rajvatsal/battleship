@@ -58,7 +58,6 @@ function runComputer() {
 
 function resetGame() {
 	for (const player of players) {
-		player.resetBoard();
 		player.createRandomLayout();
 	}
 
@@ -85,7 +84,6 @@ pubsub.on("StartGamePre", () => {
 
 pubsub.on("RandomBoardHumanPre", () => {
 	const human = playerOne.playerType === "human" ? playerOne : playerTwo;
-	human.resetBoard();
 	human.createRandomLayout();
 	pubsub.emit("RandomBoardHumanPost", {
 		board: human.getBoard(),

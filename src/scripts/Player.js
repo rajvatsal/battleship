@@ -181,18 +181,14 @@ function Gameboard() {
 		},
 
 		createRandomLayout: function () {
+			if (_ships.length > 0) this.resetBoard();
+			const shipLengths = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1];
 			let length;
 			let coordinates;
 			let angle;
-			// [[NOTE TO SELF ]]
-			// Use a set of predefined ships that you want to use
-			// example 1 ship of length 5,
-			// 2 ships for length 3
-			// 5 ships of length 1
-			// instead of maginc values like 10
-			for (let i = 0; i < 10; i++) {
+			for (const len of shipLengths) {
 				do {
-					length = getRandom(5, 1);
+					length = len;
 					coordinates = [getRandom(9, 0), getRandom(9, 0)];
 					angle = getRandom(2, 0) === 1 ? 180 : 90;
 				} while (this.placeShip(coordinates, angle, length) === false);
