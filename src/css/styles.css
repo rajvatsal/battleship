@@ -190,7 +190,7 @@ button[data-game-state="started"] {
 
 .board__columns {
   position: absolute;
-  top: -20px;
+  top: -25px;
   display: grid;
   grid-template: 20px / repeat(10, 1fr);
   width: 100%;
@@ -203,6 +203,12 @@ button[data-game-state="started"] {
   display: grid;
   height: 100%;
   place-items: center;
+}
+
+.board__rows,
+.board__columns {
+  font-size: 0.85rem;
+  font-family: var(--ff-light);
 }
 
 .game-logo {
