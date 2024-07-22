@@ -14,6 +14,7 @@
 body {
   font-family: var(--ff-primary);
   color: var(--clr-text);
+  margin-top: 20px;
 }
 
 #gameboards {
@@ -211,23 +212,14 @@ button[data-game-state="started"] {
   font-family: var(--ff-light);
 }
 
-.game-logo {
-  display: flex;
-}
-
-.game-logo > span {
-  height: 80px;
-  aspect-ratio: 1 / 1;
-}
-
-.game-logo > h1 {
-  align-self: center;
-  margin: 0 0;
-  font-size: 1.5rem;
-  font-family: var(--ff-heading);
-  font-weight: normal;
-}
-
 .options__buttons {
   margin-left: 100px;
+}
+
+header > h1 {
+  grid-column: 2 / 3;
+  font-family: var(--ff-heading);
+  font-weight: normal;
+  text-align: center;
+  margin-inline: auto;
 }
