@@ -32,7 +32,7 @@ const btnStartGame = $("button.btn-start");
 const btnResetGame = $(".options__buttons__reset");
 
 // Add logo
-header.prepend(getLogo());
+// header.prepend(getLogo());
 
 // Add Indexes
 const { columns: c1, rows: r1 } = getIndexes();

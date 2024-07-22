@@ -14,6 +14,7 @@
 body {
   font-family: var(--ff-primary);
   color: var(--clr-text);
+  margin-top: 20px;
 }
 
 #gameboards {
@@ -73,20 +74,14 @@ header {
 
 .board:not(.appear)::after {
   content: "";
-  color: white;
   position: absolute;
   background-color: #ffffffa8;
   backdrop-filter: blur(0.7px);
-  top: -20px;
+  top: -25px;
   left: -20px;
-  height: calc(100% + 4px + 20px);
+  height: calc(100% + 4px + 25px);
   width: calc(100% + 4px + 20px);
   z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2rem;
-  transition: all 1s ease;
 }
 
 .board > button {
@@ -132,7 +127,7 @@ button.miss > svg {
 
 button.visible-ship {
   background-color: #f3f3ff;
-  border: 2px solid #0039ff;
+  border: 2px solid var(--bg-btn);
   width: 100%;
   height: 100%;
   box-sizing: content-box;
@@ -160,12 +155,19 @@ button[data-game-state="not-started"] {
   font-family: var(--ff-heading);
   background-color: #282828;
   color: #fffffff0;
+  transition:
+    color 150ms ease,
+    background-color 150ms ease,
+    border 150ms ease;
   transition: box-shadow 200ms ease;
-  box-shadow: 3px 3px #86b6e0;
 }
 
 button[data-game-state="not-started"]:hover {
-  box-shadow: 6px 6px #86b6e0;
+  box-shadow: 6px 6px var(--bg-btn);
+  color: var(--bg-btn);
+  background-color: white;
+  border: 1px solid var(--bg-btn);
+  box-shadow: 6px 6px var(--bg-btn);
 }
 
 button[data-game-state="started"] {
@@ -194,7 +196,6 @@ button[data-game-state="started"] {
   display: grid;
   grid-template: 20px / repeat(10, 1fr);
   width: 100%;
-  justify-items: center;
 }
 
 .board__rows {
@@ -202,32 +203,29 @@ button[data-game-state="started"] {
   left: -20px;
   display: grid;
   height: 100%;
-  place-items: center;
 }
 
 .board__rows,
 .board__columns {
   font-size: 0.85rem;
   font-family: var(--ff-light);
-}
-
-.game-logo {
-  display: flex;
-}
-
-.game-logo > span {
-  height: 80px;
-  aspect-ratio: 1 / 1;
-}
-
-.game-logo > h1 {
-  align-self: center;
-  margin: 0 0;
-  font-size: 1.5rem;
-  font-family: var(--ff-heading);
-  font-weight: normal;
+  place-items: center;
 }
 
 .options__buttons {
   margin-left: 100px;
+}
+
+.options__buttons button {
+  background-color: var(--bg-btn);
+  color: white;
+  border-radius: 2px;
+}
+
+header > h1 {
+  grid-column: 2 / 3;
+  font-family: var(--ff-heading);
+  font-weight: normal;
+  text-align: center;
+  margin-inline: auto;
 }
