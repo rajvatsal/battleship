@@ -4,11 +4,8 @@
 :root {
   --tile-length: 30px;
   --tile-number: 10;
-  --clr-board-border: #c4c6fd;
-  --bg-board: white;
   --side-gap: 200px;
   --dot-scale: 0.65;
-  --bg-miss: #f3f7fe;
 }
 
 body {
@@ -114,11 +111,8 @@ button.hit svg {
   transform: scale(1.5);
 }
 
-button.miss {
-  background-color: var(--bg-miss);
-}
-
-button.miss > svg {
+button.miss-old > svg,
+button.miss-new > svg {
   aspect-ratio: 1 / 1;
   width: 100%;
   fill: black;
@@ -134,8 +128,16 @@ button.visible-ship {
   transform: translate(-2px, -2px);
 }
 
+button.miss-old {
+  background-color: var(--bg-miss-old);
+}
+
+button.miss-new {
+  background-color: var(--bg-miss-new);
+}
+
 button.verified-tile {
-  background-color: var(--bg-miss);
+  background-color: var(--bg-miss-old);
 }
 
 button.verified-tile > svg {
@@ -178,7 +180,8 @@ button[data-game-state="started"] {
   > button[data-coordinates]:not(
     .verified-tile,
     .visible-ship,
-    .miss,
+    .miss-old,
+    .miss-new,
     .hit
   ):hover {
   background-color: #f0fff0;

@@ -20,13 +20,18 @@
   --clr-400: #00447d;
   --clr-valid-400: green;
   --clr-text: #282828;
+  --clr-board-border: #c4c6fd;
+
+  --bg-btn: var(--clr-400);
+  --bg-miss-new: #ffffc2;
+  --bg-miss-old: #f3f7fe;
 
   --ff-primary: var(--ff-roboto-regular);
   --ff-light: var(--ff-roboto-regular);
   --ff-heading: var(--ff-war);
   --ff-btn: var(--ff-roboto-regular);
 
-  --bg-btn: var(--clr-400);
+  --bg-board: white;
 }
 
 /*

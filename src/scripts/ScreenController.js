@@ -1,7 +1,6 @@
 // todo
-// make intial attack yellow
+// make intial attack yellow find a better solution than current one
 // reduce computer's attack time
-// use better font
 // fix reset button
 import populateGrid from "./DisplayGameboard.js";
 import pubsub from "./Pubsub.js";
@@ -16,7 +15,7 @@ const classes = {
 		cs.innerHTML = icons.cross;
 	},
 	O: (cs = currentSquare) => {
-		cs.setAttribute("class", "miss");
+		cs.setAttribute("class", "miss-new");
 		cs.innerHTML = icons.dot;
 	},
 	".": (cs = currentSquare) => cs.setAttribute("class", ""),
@@ -35,9 +34,6 @@ const btnRandomize = $(".options__btn__container:nth-child(1)");
 const btnStartGame = $("button.btn-start");
 const btnResetGame = $(".options__btn__container:nth-child(2)");
 
-// Add logo
-// header.prepend(getLogo());
-
 // Add Indexes
 const { columns: c1, rows: r1 } = getIndexes();
 const { columns: c2, rows: r2 } = getIndexes();
@@ -50,7 +46,8 @@ rightBoard.append(c2, r2);
 // stored in this variable becuase to run the function after the
 // return statement from pubsub (add appropriate styling to that square in
 // updateBoard function()
-let currentSquare;
+let currentSquare = null;
+let oldMiss = { left: null, right: null };
 
 populateGrid(leftBoard);
 populateGrid(rightBoard);
@@ -118,13 +115,18 @@ function updateBoard({ symbol, side, attackOutcome, coords }) {
 	const [x, y] = coords;
 	const board = side === "left" ? leftBoard : rightBoard;
 	const square = board.querySelector(`[data-coordinates="${x}-${y}"]`);
+
+	// reset old miss
+	if (oldMiss[side] !== null) oldMiss[side].setAttribute("class", "miss-old");
 	// mark square that was attacked
 	classes[symbol](square);
 
 	// if attacke was successful then show verfied squares
 	if (attackOutcome.status === "Invalid") return;
-	if (attackOutcome.status === "miss")
+	if (attackOutcome.status === "miss") {
+		oldMiss[side] = square;
 		return showActivePlayer(getActiveBoard());
+	}
 	renderVerifiedSquares(attackOutcome, side);
 }
 
@@ -159,7 +161,8 @@ function renderVerifiedSquares({ board, squares }, side) {
 		const square = $(
 			`.gameboards__${side}__board > [data-coordinates="${x}-${y}"]`,
 		);
-		classes[board[x][y]](square);
+		if (board[x][y] === "O") square.setAttribute("class", "miss-old");
+		else classes[board[x][y]](square);
 	}
 }
 
