@@ -207,19 +207,45 @@ button[data-game-state="started"] {
 
 .board__rows,
 .board__columns {
-  font-size: 0.85rem;
+  font-size: var(--fs-board-index);
   font-family: var(--ff-light);
   place-items: center;
 }
 
 .options__buttons {
   margin-left: 100px;
+  display: flex;
+  gap: 15px;
 }
 
 .options__buttons button {
+  padding-inline: 0px;
   background-color: var(--bg-btn);
-  color: white;
+  font-family: var(--ff-btn);
+  font-size: 0.8rem;
+  color: var(--clr-400);
+  background-color: transparent;
+  border-bottom: 1pt dotted var(--clr-400);
   border-radius: 2px;
+}
+
+.options__btn__container svg {
+  aspect-ratio: 1 / 1;
+  height: 18px;
+  fill: var(--clr-400);
+}
+
+.options__btn__container {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+}
+
+.options__btn__container:hover * {
+  fill: var(--clr-valid-400);
+  color: var(--clr-valid-400);
+  border-color: var(--clr-valid-400);
+  cursor: pointer;
 }
 
 header > h1 {

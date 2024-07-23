@@ -6,24 +6,27 @@
 @import url("./fonts/roboto/roboto_light_macroman/stylesheet.css");
 
 :root {
-  --ff-primary: var(--ff-mono-bold);
-  --ff-light: var(--ff-mono-medium);
-  --ff-heading: var(--ff-war);
-
   --ff-war: "war-font";
-
   --ff-roboto-regular: "robotoregular";
   --ff-roboto-light: "robotolight";
-  --ff-roboto-condensed: "roboto_condensed";
+  --ff-roboto-condensed: "roboto_condensedregular";
   --ff-roboto-condensed-light: "-roboto_condensedlight";
-
   --ff-mono-medium: "monospacemedium";
   --ff-mono-bold: "monospacebold";
   --ff-mono-oblique: "monospaceoblique";
 
+  --fs-board-index: 0.59rem;
+
+  --clr-400: #00447d;
+  --clr-valid-400: green;
   --clr-text: #282828;
 
-  --bg-btn: #00447d;
+  --ff-primary: var(--ff-roboto-regular);
+  --ff-light: var(--ff-roboto-regular);
+  --ff-heading: var(--ff-war);
+  --ff-btn: var(--ff-roboto-regular);
+
+  --bg-btn: var(--clr-400);
 }
 
 /*

@@ -1,3 +1,8 @@
+// todo
+// make intial attack yellow
+// reduce computer's attack time
+// use better font
+// fix reset button
 import populateGrid from "./DisplayGameboard.js";
 import pubsub from "./Pubsub.js";
 import icons from "./Icons.js";
@@ -26,10 +31,9 @@ const classes = {
 const $ = document.querySelector.bind(document);
 const leftBoard = $(".gameboards__left__board");
 const rightBoard = $(".gameboards__right__board");
-const header = $("header");
-const btnRandomize = $(".options__buttons__randomize");
+const btnRandomize = $(".options__btn__container:nth-child(1)");
 const btnStartGame = $("button.btn-start");
-const btnResetGame = $(".options__buttons__reset");
+const btnResetGame = $(".options__btn__container:nth-child(2)");
 
 // Add logo
 // header.prepend(getLogo());
