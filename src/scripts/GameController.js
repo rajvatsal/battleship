@@ -4,7 +4,7 @@ import pubsub from "./Pubsub.js";
 const playerOne = Player({ type: 0, side: "left" });
 const playerTwo = Player({ type: 1, side: "right" });
 const players = [playerOne, playerTwo];
-const computerDelay = 1200;
+const computerDelay = 800;
 let activePlayer = playerTwo;
 let attackedPlayer = playerOne;
 
