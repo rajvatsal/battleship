@@ -6,7 +6,7 @@
 
 - Test driven development
 - Getting more comfortable with pubsub and module pattern
-- Got more confortable with git rebasing and imporved quality of commit messages
+- Got more confortable with git rebasing and improved quality of commit messages
 - Better way to add fonts in css
 - Functional mixins
 - Function composition
