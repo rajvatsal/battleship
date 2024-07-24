@@ -7,6 +7,7 @@ const players = [playerOne, playerTwo];
 const computerDelay = 800;
 let activePlayer = playerTwo;
 let attackedPlayer = playerOne;
+let compTimeout = null;
 
 export const getActiveBoard = () => attackedPlayer.side;
 
@@ -31,8 +32,9 @@ function playRound({ side, coords }) {
 	if (attackedPlayer.hasLost())
 		return pubsub.emit("GameOver", attackedPlayer.side);
 	if (attackOutcome.status === "miss") switchTurn();
-	if (activePlayer.playerType === "computer")
-		setTimeout(runComputer, computerDelay);
+	if (activePlayer.playerType === "computer") {
+		compTimeout = setTimeout(runComputer, computerDelay);
+	}
 
 	pubsub.emit("ReceivedAttackPost", {
 		symbol,
@@ -63,6 +65,7 @@ function resetGame() {
 
 	activePlayer = playerTwo;
 	attackedPlayer = playerOne;
+	if (compTimeout !== null) clearTimeout(compTimeout);
 	pubsub.emit("ResetGamePost", [playerOne.getBoard(), playerTwo.getBoard()]);
 }
 
@@ -78,8 +81,9 @@ pubsub.on("InitializePagePre", () => {
 });
 
 pubsub.on("StartGamePre", () => {
-	if (activePlayer.playerType === "computer")
-		setTimeout(runComputer, computerDelay);
+	if (activePlayer.playerType === "computer") {
+		compTimeout = setTimeout(runComputer, computerDelay);
+	}
 });
 
 pubsub.on("RandomBoardHumanPre", () => {

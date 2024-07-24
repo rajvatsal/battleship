@@ -1,7 +1,5 @@
 // todo
 // make intial attack yellow find a better solution than current one
-// reduce computer's attack time
-// fix reset button
 import populateGrid from "./DisplayGameboard.js";
 import pubsub from "./Pubsub.js";
 import icons from "./Icons.js";
