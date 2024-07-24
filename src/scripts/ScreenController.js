@@ -45,7 +45,7 @@ rightBoard.append(c2, r2);
 // return statement from pubsub (add appropriate styling to that square in
 // updateBoard function()
 let currentSquare = null;
-let oldMiss = { left: null, right: null };
+const oldMiss = { left: null, right: null };
 
 populateGrid(leftBoard);
 populateGrid(rightBoard);
