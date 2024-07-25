@@ -1,18 +1,12 @@
 const _events = {};
 
-const on = (eventName, fn, pubsubId) => {
-	//subscriber function
-	if (pubsubId) fn.psId = pubsubId;
+const on = (eventName, ...fns) => {
 	_events[eventName] = _events[eventName] || [];
-	if (Object.getPrototypeOf(fn).constructor === Array) {
-		for (const callback of fn) {
-			_events[eventName].push(callback);
-		}
-	} else _events[eventName].push(fn);
+	// biome-ignore lint/complexity/noForEach: <explanation>
+	fns.forEach((fn) => _events[eventName].push(fn));
 };
 
 const off = (eventName, fn) => {
-	//remover function
 	if (_events[eventName]) {
 		for (let i = 0; i < _events[eventName].length; i++) {
 			if (_events[eventName][i] === fn) {
@@ -23,16 +17,10 @@ const off = (eventName, fn) => {
 	}
 };
 
-const emit = (eventName, data, fnName) => {
-	//publish function
-	let returnValue = null;
-	if (_events[eventName]) {
-		for (const fn of _events[eventName]) {
-			if (fn.psId === fnName) returnValue = fn(data);
-			else fn(data);
-		}
-	}
-	return returnValue;
+const emit = (eventName, data) => {
+	if (_events[eventName])
+		// biome-ignore lint/complexity/noForEach: <explanation>
+		_events[eventName].forEach((fn) => fn(data));
 };
 
 export default { on, off, emit };
