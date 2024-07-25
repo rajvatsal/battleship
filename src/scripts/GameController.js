@@ -45,14 +45,14 @@ function playRound({ side, coords }) {
 }
 
 function updateComputerStatus(outcome, coords) {
-	const ai = activePlayer.ai;
+	const { ai } = activePlayer;
 	ai.setPrevStatus(outcome.status);
 	if (outcome.status === "hit" && ai.isAnchorNull()) ai.setAnchor(coords);
 	if (outcome.status === "sunk") ai.resetStatus();
 }
 
 function runComputer() {
-	const side = attackedPlayer.side;
+	const { side } = attackedPlayer;
 	const coords = activePlayer.ai.attack(attackedPlayer.getBoard());
 	activePlayer.ai.setPrevCoords(coords);
 	playRound({ side, coords });
