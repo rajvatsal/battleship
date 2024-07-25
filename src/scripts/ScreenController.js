@@ -128,7 +128,7 @@ function updateBoard({ symbol, side, attackOutcome, coords }) {
 	renderVerifiedSquares(attackOutcome, side);
 }
 
-function gameOver(side) {
+function gameOver({ side }) {
 	if (side === "right") alert("You won :)");
 	else alert("You Lost :_(");
 }
@@ -164,8 +164,8 @@ function renderVerifiedSquares({ board, squares }, side) {
 	}
 }
 
+pubsub.on("GameOver", updateBoard, gameOver);
 pubsub.on("ReceivedAttackPost", updateBoard);
-pubsub.on("GameOver", gameOver);
 pubsub.on("InitializePagePost", initializeGame);
 pubsub.on("RandomBoardHumanPost", renderBoard);
 pubsub.on("ResetGamePost", resetGamePost);

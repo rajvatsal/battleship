@@ -30,7 +30,7 @@ function playRound({ side, coords }) {
 	const symbol = attackedPlayer.getBoard()[x][y];
 
 	if (attackedPlayer.hasLost())
-		return pubsub.emit("GameOver", attackedPlayer.side);
+		return pubsub.emit("GameOver", { symbol, side, attackOutcome, coords });
 	if (attackOutcome.status === "miss") switchTurn();
 	if (activePlayer.playerType === "computer") {
 		compTimeout = setTimeout(runComputer, computerDelay);
